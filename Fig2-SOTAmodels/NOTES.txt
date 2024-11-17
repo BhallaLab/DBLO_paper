@@ -1,0 +1,6 @@
+Migliore LJP not corrected: features_['DBL_1.5e-10']=-0.06925610385962298, features_['DBLO_1.5e-10']=0.0007468303135497317
+Migliore LJP corrected: features_['DBL_1.5e-10']=-0.06745076526391876, features_['DBLO_1.5e-10']=0.016015133137878557
+Turi LJP not corrected: features_['DBL_1.5e-10']=-0.06028818493514494, features_['DBLO_1.5e-10']=0.004680853101657861
+Turi LJP corrected: features_['DBL_1.5e-10']=-0.059258256192027764, features_['DBLO_1.5e-10']=0.012521604616595364
+Tomko LJP not corrected: features_['DBL_1.5e-10']=-0.05608229639576244, features_['DBLO_1.5e-10']=0.014185748702565698
+Gouwens LJP not manually corrected: features_['DBL_1.5e-10']=-0.06213905738871423, features_['DBLO_1.5e-10']=0.021013043497787827
