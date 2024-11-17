@@ -1,0 +1,17 @@
+Kruskal-Wallis H-test KruskalResult(statistic=13.44263211169914, pvalue=0.0012049513866895178)
+Dunn’s test            Gouwens  Migliore    Royeck
+Gouwens   1.000000  0.001032  0.308556
+Migliore  0.001032  1.000000  0.004275
+Royeck    0.308556  0.004275  1.000000
+Mean DBLO at 150pA: type
+Gouwens     -8.361021
+Migliore    -16.71347
+Royeck     -12.202675
+Name: DBLO150 (mV), dtype: Float64
+std DBLO at 150pA: type
+Gouwens     9.440301
+Migliore    2.278853
+Royeck      3.705772
+Name: DBLO150 (mV), dtype: Float64
+Max DBLO in Gouwens - 15.117549596074669
+Number of high DBLO Models in Gouwens - 1Number of moderate DBLO Models in Gouwens - 4

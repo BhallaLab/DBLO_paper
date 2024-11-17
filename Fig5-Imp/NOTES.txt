@@ -1,0 +1,27 @@
+Repeated Measures ANOVA      Source  ddof1  ddof2          F  p-unc       ng2       eps
+0  modelID   4173   8346  40.151689    0.0  0.857656  0.000315
+paired ttest Imp vs 1compt 0.0
+paired ttest Imp vs pas 0.0
+paired ttest pas vs 1compt 0.0
+Mean DBLO at 150pA
+ type
+1compt   -12.747611
+imp       -9.309142
+pas      -11.736035
+Name: DBLO150\n(mV), dtype: Float64
+paired ttest Imp vs pas 0.0
+Mean Axial Charge type
+imp    1.641018
+pas    0.583888
+Name: Backprop charge \n(pF), dtype: object
+std Axial Charge type
+imp    0.742498
+pas    0.499025
+Name: Backprop charge \n(pF), dtype: float64
+1compt 4170 4 0
+pas 4173 1 0
+imp 4154 19 1
+-1.257430686468231
+3.438469499739852
+9.169810040652523
+Max DBLO in imp models - 14.645325750503064
