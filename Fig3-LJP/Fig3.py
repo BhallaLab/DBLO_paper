@@ -114,8 +114,8 @@ axB.axhline(y=(Features["DBL_3e-10"]-LJP)*1e3, color='C0', linestyle='--')
 axB.legend(frameon=False, loc='lower center')
 
 ##### The kinetics ###############
-axC.plot(v*1e3, minf**3, c='C1', label='$m\_inf^3$')
-axC.plot(v*1e3, hinf, c='C5', label='h_inf')
+axC.plot(v*1e3, minf**3, c='C1', label='$m_{inf}^3$')
+axC.plot(v*1e3, hinf, c='C5', label='$h_{inf}$')
 axC.set_xlabel('Voltage (mV)')
 axC.set_ylabel('steady state')
 axC.set_xlim(-0.1*1e3, 0*1e3)
