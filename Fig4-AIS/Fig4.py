@@ -49,7 +49,7 @@ for i, ax in enumerate([axA, axB, axC, axD]):
 
 #######################################
 
-#########################################
+#############Panel A############################
 image = plt.imread('AISsoma_Anzal.png')
 position = axA.get_position()
 Aposition = axA.transAxes.transform(axA.get_children()[0].get_position())
@@ -61,6 +61,8 @@ axA.get_children()[0].set_position(axA.transAxes.inverted().transform(Aposition)
 axA.axis('off')
 #######################################
 
+
+###### Panel B C ############################
 # Load models from the JSON file
 basemodels_list = []
 file_path = "activemodels.json"
@@ -110,10 +112,10 @@ axD.legend(frameon=False)
 
 axD_inset.tick_params(labelleft=False, labelbottom=False, bottom = False, left=False)
 
-axB.scatter(RA_list[highRAmodelidx], np.array(DBLO_150pA_list)[highRAmodelidx]*1e3, c='C2', s=15)
-axB.scatter(RA_list[lowRAmodelidx], np.array(DBLO_150pA_list)[lowRAmodelidx]*1e3, c='C3', s=15)
-axC.scatter(RA_list[highRAmodelidx], np.array(AP1amp_150pA_list)[highRAmodelidx]*1e3, c='C2', s=15)
-axC.scatter(RA_list[lowRAmodelidx], np.array(AP1amp_150pA_list)[lowRAmodelidx]*1e3, c='C3', s=15)
+axB.scatter(RA_list[highRAmodelidx], np.array(DBLO_150pA_list)[highRAmodelidx]*1e3, c='C2', s=100, marker='X')
+axB.scatter(RA_list[lowRAmodelidx], np.array(DBLO_150pA_list)[lowRAmodelidx]*1e3, c='C3', s=100, marker='X')
+axC.scatter(RA_list[highRAmodelidx], np.array(AP1amp_150pA_list)[highRAmodelidx]*1e3, c='C2', s=100, marker='X')
+axC.scatter(RA_list[lowRAmodelidx], np.array(AP1amp_150pA_list)[lowRAmodelidx]*1e3, c='C3', s=100, marker='X')
 
 ######################
 sns.despine(fig=fig)
