@@ -1,6 +1,9 @@
 import sys 
 sys.path.insert(1, "../helperScripts")
 
+# import pylustrator
+# pylustrator.start()
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
