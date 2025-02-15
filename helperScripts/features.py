@@ -421,6 +421,11 @@ def ftscalc_helper(
                 efelFkeyslist,
             )
             trace_result = traces_results[0]
+            try:
+                if (traces_results[0]["AP_amplitude"]<50).any(): ## If any of the spikes are less than 50 mV, the APs are invalid
+                    return features
+            except Exception as e:
+                return features
             # pprint(trace_result)
         elif I == 300e-12:
             trace300["T"] = t300[(t300>=stim_start) & ((t300<stim_end))] * 1e3
