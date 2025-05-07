@@ -1,0 +1,591 @@
+/* ____________      CELL SET-UP PROCEEDURE      _____________ */
+
+RmSoma=149999*1.5//.25
+RaSoma=42.562*1.5//.25
+RmTuft=45373.4*1.5//.25
+RaTuft=35*1.5//.25
+DistHalfRm=151.741
+DistHalfRa=90.8296
+SlopeRm=13.8656
+SlopeRa=7.76766
+soma_hbar = 0.00003//25
+KirGbar          = 0.00020307*6   // Maximum conductance of potassium inward rectifier.
+Epas=-71.9879
+CmSoma=1
+
+
+SpineFactorBasal=3.5
+SpineFactorTuft=3.5
+
+//curbase was 0.05 in the soma and 0.06 in the dendrites
+balance = 0
+geomnseg = 1
+
+strdef sectype
+objref CAN_temp, CAL_temp, CAT_temp, KAD_temp, KAP_temp, NA_temp
+
+
+//RTH>> set distance ref
+soma distance()
+
+// SEVERELY affects experiment results
+celsius      = 34 // Temperature of slice.")
+        
+//NDB >>>>  $o1.xopen_library("Terrence","cut-sections")
+//          cut_sections(maximum_segment_length)
+//maximum_segment_length=75
+//forall {
+  //  nseg=1+int(L/maximum_segment_length)
+//}
+//<<<< NDB
+
+//ORIG>>// make 3-d mapping of cell sections
+//NDB >>>>    $o1.xopen_library("Terrence","map-segments-to-3d")
+//           map_segments_to_3d()
+forall {
+	insert d3
+	i=0
+	x_d3(0)=x3d(0)
+	y_d3(0)=y3d(0)
+	z_d3(0)=z3d(0)
+
+	for (x) if (x > 0 && x < 1) {
+		while (arc3d(i)/L < x) { i += 1 }
+		D=arc3d(i) - arc3d(i-1)
+		if (D <= 0) {
+			printf("\t\t * %s had a D < 0\n", secname())
+		}
+		alpha = (x*L - arc3d(i-1))/D
+		x_d3(x)=x3d(i-1) + (x3d(i) - x3d(i-1))*alpha
+		y_d3(x)=y3d(i-1) + (y3d(i) - y3d(i-1))*alpha
+		z_d3(x)=z3d(i-1) + (z3d(i) - z3d(i-1))*alpha
+	}
+
+	x_d3(1)=x3d(n3d()-1)
+	y_d3(1)=y3d(n3d()-1)
+	z_d3(1)=z3d(n3d()-1)
+}
+//NDB <<<<
+
+//ORIG>>// prepare to make a graph with cell configuration
+//NDB >>>>    $o1.tmpo2=new Shape()
+objref tmpo2
+tmpo2=new Shape()
+//NDB <<<<  
+
+//ORIG>>// Set initial conductance values 
+soma_caL =0.00006
+soma_car =0.00003
+gsomacar =0.00008
+soma_caLH =0// 0.00017
+soma_caT =0.0003
+soma_km=0.001*0
+potNa=50
+mykca_init =0*0.9*1.5*0.03 //0.03 flag
+soma_kca =0*0.7*4.5*0.0001//0.003 flag
+AXKdr=1
+AXNa=7//7
+
+gkdrdend=0
+gnanotrunk=0
+
+psoma=0.0006//0.0015//0.01
+pnotsoma=0.0006//0.0015//0.01
+slowsoma=0.1
+slownotsoma=0.1
+sinfsoma=1.19//1.35
+distalv=0
+proximalv=6
+
+soma_kap =7*0.0005*4*3.25//2.75//.2.75//
+soma_kad =7*0.0005*4*3.25//2.75//2.75//
+axon_kap=7*0.0005*4*7//7
+gna=0.035*1.2//*1.2 
+axongkdr=0.015//65//*1.5//0.015
+gkdrapical=0.017*0.075//0.075
+gkd=0.005
+gnadend=0.034//*1.5
+gkv2soma=0.00264*8//13//12
+gkv2=0.00198*6//10//10
+gkv2axon=0.00198*6//10//10
+gkv2scale=0.15
+
+
+scale_Na_conduct=13//.15//12.5
+gkdrsoma=gkdrapical*0
+
+
+
+icanfrac= 0.0
+icangbar = 0.065*0.5//22//
+cantau = 80
+
+gip3= 1.85 // varies alpha as conductance of IP3R
+
+// ***************************************************
+// * Definition of exponential function that doesn't *
+// * produce out-of-range values.                    *
+// ***************************************************
+
+func MyExp() {
+    if ($1>50) {
+        return exp(50)
+    } else {
+        if ($1<-50) {
+            return 0
+        } else {
+            return exp($1)
+        }
+    }
+}
+
+//ORIG>>// Start inserting mechanisms in cell
+sectype ="soma"
+forsec "soma" {
+
+	insert ican
+		gbar_ican = icangbar
+		taur_ican = cantau
+	
+	insert na16a
+	
+		gbar_na16a= gna * scale_Na_conduct 
+		
+		dist_na16a = sinfsoma
+		
+		persist_na16a = psoma
+		
+		slowdown_na16a = slowsoma
+		
+		C1O1v2_na16a=proximalv
+		
+	insert kd
+		gbar_kd=gkdrsoma
+		//shift_kdr=shiftkdr
+		//scale_kdr=scalekdr
+	ena         = potNa
+	
+	insert Kv2like
+	gbar_Kv2like=gkv2soma
+	insert nap  //flag
+		gnabar_nap = 0*.5*0.000014 
+		K_nap = 4.5
+		vhalf_nap = -60.4
+	
+	insert pas
+    Rm=RmTuft+1*(RmSoma-RmTuft)/(1+MyExp((-DistHalfRm)/SlopeRm))
+    Ra=RaTuft+1*(RaSoma-RaTuft)/(1+MyExp((-DistHalfRa)/SlopeRa))
+    g_pas=1/Rm
+    cm=CmSoma
+	
+	insert h     // h current 
+		gbar_h  = soma_hbar
+		K_h     = 8.8
+		vhalf_h = -82
+	insert kap  // proximal A current
+		gkabar_kap = soma_kap
+	ek         = -80
+	insert km  // m-type potassium current
+		gbar_km    = soma_km
+	ek         = -80 
+	insert cal // HVA Ca++-L type current
+		gcalbar_cal = 0.1*soma_caL
+	insert cat // LVA Ca++-T type current
+		gcatbar_cat = soma_caT
+        //insert somacar // HVAm Ca++-R type current
+    	//gcabar_somacar = gsomacar
+	insert car // HVAm Ca++-R type current
+	gcabar_car = gsomacar
+	insert kca   // K(Ca) mAHP potassium type current
+		cac_kca=0.00075 //0.0005
+		gbar_kca = 0.5*soma_kca
+	insert mykca // K(Ca) fAHP potassium type current
+		gkbar_mykca = 5.5*mykca_init        
+	//insert cad  // calcium pump/buffering mechanism 
+		//taur_cad=20
+	//insert cabalan  // calcium pump/buffering mechanism 
+	tmpo2.color(2) 
+
+}
+
+//ORIG>>  Configure Axon
+
+sectype="axon"
+forsec axon_sec_list {	  
+	insert nax
+		gbar_nax=gna*AXNa
+	insert kd
+		gbar_kd=axongkdr
+		//shift_kdr=shiftkdr
+		//scale_kdr=scalekdr
+	ena         = potNa
+	
+	insert pas
+    Rm=RmTuft+1*(RmSoma-RmTuft)/(1+MyExp((-DistHalfRm)/SlopeRm))
+    Ra=RaTuft+1*(RaSoma-RaTuft)/(1+MyExp((-DistHalfRa)/SlopeRa))
+    g_pas=1/Rm
+    cm=CmSoma
+    
+	insert km  // m-type potassium current
+		gbar_km     = 3*soma_km
+		ek          = -80
+	insert kap  // proximal A current
+	   gkabar_kap = axon_kap
+	   ek         = -80
+	insert Kv2like
+		gbar_Kv2like=gkv2axon
+}
+    
+//ORIG>>  Configure apical trunk
+ 
+forsec apical_list {
+
+	insert ican
+		gbar_ican = icangbar
+		taur_ican = cantau
+
+	//ORIG>>// apical_h_insert_sig($o1)    // Inserting h-current
+	//NDF>>>	apical_caR_caLH_insert($o1) // Inserting Ca++ R-type and Ca++ L-type currents
+	for (x) {  
+		//xdist = find_vector_distance_precise(secname(),x)
+		xdist=distance(x)
+		insert car
+		gcabar_car(x) = 0.1*soma_car
+		insert calH
+		if (xdist > 50) {            
+			gcalbar_calH(x) = 2*soma_caLH    //4.6*soma_caLH
+		} else {
+			gcalbar_calH(x) = 0.1*soma_caLH               //0.1*soma_caLH
+		}
+	}
+	//<<<NDF
+	//NDF>>> apical_caT_insert($o1)      // Inserting Ca++ T-type current
+	caT_distal_maxfactor = 4   //ORIG>> maximum cond. factor in dendrites
+	caT_distal_distance  = 350 //ORIG>> distance in dendrites for maximum cond.
+	for (x) {  
+		//xdist = find_vector_distance_precise(secname(),x)
+		xdist = distance(x)
+		fr = xdist/caT_distal_distance
+		insert cat  
+		if (xdist < 100) {
+			gcatbar_cat(x) = 0
+		} else {
+			gcatbar_cat(x) = caT_distal_maxfactor*soma_caT*fr
+		} 
+	}
+	//<<<NDF
+	//NDF>>> apical_kca_insert($o1)      // Inserting K(Ca) sAHP and mAHP potassium currents
+	kca_distal_maxfactor = 1   //ORIG>> maximum cond. factor in dendrites
+	//ORIG>>// kca_distal_maxfactor = 0 //maximum cond. factor in dendrites
+    kca_distal_distance  = 200 //ORIG>> distance in dendrites for maximum cond.
+	for (x) {  
+		//xdist = find_vector_distance_precise(secname(),x)
+		xdist = distance(x)
+		fr = xdist/kca_distal_distance 
+		//insert cad    // calsium pump/buffering mechanism
+			//taur_cad=20
+		insert kca    // slow AHP K++ current
+			cac_kca=0.00075 //0.0005
+		insert mykca  // medium AHP K++ current
+
+		if (xdist < kca_distal_distance && xdist > 50) {       
+			gbar_kca(x) = 5*soma_kca
+			gkbar_mykca = 2*mykca_init
+		} else {
+			gbar_kca(x) = 0.5*soma_kca
+			gkbar_mykca = 0.5*mykca_init
+		}
+	}
+	//<<<NDF
+	//ORIG>>// A_insert($o1)               // Inserting A-current
+	insert h
+	insert kap
+	insert kad
+	insert Kv2like
+	
+
+	for (x){ 
+		xdist = distance(x)
+		if (xdist>500) {xdist=500}
+		gbar_h(x) = soma_hbar*(1+(6/5)*xdist/100)
+		if (xdist > 100){
+			if (xdist>300) {ndist=300} else {ndist=xdist}
+			vhalf_h(x)=-81-8*(ndist-100)/200
+			gkabar_kad(x) = soma_kad*(1+xdist/100)
+			gkabar_kap(x)=0
+			gbar_Kv2like(x) =gkv2*gkv2scale
+		} else {
+		
+			vhalf_h(x)=-81
+			gkabar_kap(x) = soma_kap*(1+xdist/100)
+			gbar_Kv2like(x) = gkv2
+			gkabar_kad(x)=0
+		}
+	}
+	
+	insert na16a
+		gbar_na16a=gnadend*scale_Na_conduct
+		persist_na16a=pnotsoma
+		slowdown_na16a = slownotsoma
+for (x) {  
+			xdist=distance(x)
+			
+			y=25+45*(1-MyExp(-xdist/126))
+			
+			
+			if (y>=25.5) {
+			if (y<=44.6) {
+				dist_na16a=(y-11)/14
+				persist_na16a=psoma
+				C1O1v2_na16a=6-6*xdist/200
+			} else { if (y<=58.2) {
+					dist_na16a=(y-27)/7.3
+					persist_na16a=psoma
+					C1O1v2_na16a=6-6*xdist/200
+					}else { if(y<=65.79) {					
+						dist_na16a=(y-44)/3.3 
+						persist_na16a=psoma
+						C1O1v2_na16a=6-6*xdist/200
+						} else{
+						dist_na16a=(y-44)/3.3 
+						persist_na16a=psoma
+						C1O1v2_na16a=distalv}
+			}}} else {
+			 dist_na16a=(y+2.1)/26.848
+			 persist_na16a=psoma
+			 C1O1v2_na16a=6-6*xdist/200}
+			
+		}
+	insert kd
+		gbar_kd=gkdrapical
+		//shift_kdr=shiftkdr
+		//scale_kdr=scalekdr
+	ena         = potNa
+	insert km  // m-type potassium current
+		gbar_km    = soma_km
+	ek         = -80 
+	insert pas
+
+    for (x) {
+        xdist=distance(x)
+
+        if (xdist<=100) {
+            SpineFactor=1
+        } else {
+            if (xdist>388) {
+                SpineFactor=SpineFactorTuft
+            } else {
+                SpineFactor=2+(xdist-100)*(SpineFactorTuft-2)/288
+            }
+        }
+
+        if (xdist<388) {
+            Rm=RmTuft+(RmSoma-RmTuft)/(1+MyExp((xdist-DistHalfRm)/SlopeRm))
+            Ra=RaTuft+(RaSoma-RaTuft)/(1+MyExp((xdist-DistHalfRa)/SlopeRa))
+        } else {
+            Rm=RmTuft+(RmSoma-RmTuft)/(1+MyExp((388-DistHalfRm)/SlopeRm))
+            Ra=RaTuft+(RaSoma-RaTuft)/(1+MyExp((388-DistHalfRa)/SlopeRa))
+        }
+
+        cm(x)=SpineFactor*CmSoma
+        g_pas(x)=SpineFactor/Rm
+    }
+	tmpo2.color(4)
+	
+	insert kir
+        gbar_kir=KirGbar
+		
+	for (x) {  
+		//xdist = find_vector_distance_precise(secname(),x)
+		xdist=distance(x)
+		insert kir
+		if (xdist > 100) {            
+			gbar_kir=KirGbar
+		} else {
+			gbar_kir=KirGbar*xdist/100
+		}
+	}
+}
+ 
+
+//ORIG>>//khoblique_peri_decay($o1)  // Configure the apical oblique dendrites
+
+// Configure the basal dendrites
+
+sectype = "basal tree"
+forsec basal_tree_list {
+	insert na3dend
+	insert nap
+		gnabar_nap = 0*.5*0.000014 //flag 
+		K_nap = 4.5
+		vhalf_nap = -60.4
+	insert kap 
+		gkabar_kap = 0.0025036
+	insert h                
+		gbar_h = soma_hbar
+	//ORIG>>//ek = -80 
+	insert kd
+		//shift_kdr=shiftkdr
+		//scale_kdr=scalekdr
+		gbar_na3dend=gnadend
+		gbar_kd=gkdrdend
+	ena         = potNa
+	
+	insert Kv2like
+	gbar_Kv2like = gkv2*gkv2scale
+
+	insert pas
+
+    for (x) {
+        xdist=distance(x)
+
+        if (xdist<=40) {
+            SpineFactor=1
+        } else {
+            SpineFactor=SpineFactorBasal
+        }
+
+        Rm=RmTuft+1*(RmSoma-RmTuft)/(1+MyExp((-DistHalfRm)/SlopeRm))
+        Ra=RaTuft+1*(RaSoma-RaTuft)/(1+MyExp((-DistHalfRa)/SlopeRa))
+        cm(x)=SpineFactor*CmSoma
+        g_pas(x)=SpineFactor/Rm
+    }
+	
+	for (x) {  
+		//xdist = find_vector_distance_precise(secname(),x)
+		xdist=distance(x)
+		insert kir
+		if (xdist > 40) {            
+			gbar_kir=KirGbar
+		} else {
+			gbar_kir=KirGbar*xdist/40
+		}
+	}
+		
+	tmpo2.color(5)
+}
+
+//ORIG>>//khbasal_fixed($o1) // Configure basal dendrites         
+   
+//forsec "soma" { g_pas= 1/Rm_soma} // force Rm at all soma sections
+
+//ORIG>>// forall if (ismembrane("kdr") ) {  
+//ORIG>>//           ek         = -77      //-77 
+//ORIG>>//      }
+
+
+
+forall if(ismembrane("ca_ion")) {
+	eca =140
+	ion_style("ca_ion",0,1,0,0,0)
+	vshift_ca = 0
+}
+
+maximum_segment_length=75
+//freq = 150      // Hz, frequency at which AC length constant will be computed
+freq = 100      // Hz, frequency at which AC length constant will be computed
+d_lambda = 0.1
+
+func lambda_f() { local i, x1, x2, d1, d2, lam
+        if (n3d() < 2) {
+                return 1e5*sqrt(diam/(4*PI*$1*Ra*cm))
+        }
+// above was too inaccurate with large variation in 3d diameter
+// so now we use all 3-d points to get a better approximate lambda
+        x1 = arc3d(0)
+        d1 = diam3d(0)
+        lam = 0
+        for i=1, n3d()-1 {
+                x2 = arc3d(i)
+                d2 = diam3d(i)
+                lam += (x2 - x1)/sqrt(d1 + d2)
+                x1 = x2   d1 = d2
+        }
+        //  length of the section in units of lambda
+        lam *= sqrt(2) * 1e-5*sqrt(4*PI*$1*Ra*cm)
+
+        return L/lam
+}
+
+if(geomnseg) {forall {
+    nseg = int((L/(d_lambda*lambda_f(freq))+0.9)/2)*2 + 1
+}
+}
+
+forall{
+	for(x){
+		e_pas=Epas}
+		}
+
+  
+if(balance) forall {
+      for (x) {
+        if (ismembrane("na_ion") && ismembrane("ca_ion") && ismembrane("Ca_ion") && (ismembrane("k_ion"))) {
+            e_pas(x)=(ina(x)+ik(x)+ica(x)+iCa(x)+g_pas(x)*v(x))/g_pas(x) 
+        } else if (ismembrane("na_ion") && ismembrane("ca_ion") && (ismembrane("k_ion"))){
+            e_pas(x)=(ina(x)+ik(x)+ica(x)+g_pas(x)*v(x))/g_pas(x) 
+        } else if (ismembrane("na_ion") && (ismembrane("k_ion"))) {
+            e_pas(x)=(ina(x)+ik(x)+g_pas(x)*v(x))/g_pas(x)
+          printf("Section %s ina: %g ik: %g\n", secname(), ina(x), ik(x))
+          psection()
+        } else {
+          print "simply assigning v(x)"
+          e_pas(x)=v(x)
+        }
+      fcurrent()
+    }
+  }
+  
+forall {
+	for(x){
+		insert cal4
+		DCa_cal4=0.22
+		cao0_ca_ion=2
+		ip3i_cal4=0.16e-3
+		
+		if(ismembrane("ican")){
+				setpointer jip3p_ican(x), jip3_cal4(x)
+				}
+		
+
+				
+				
+		}
+	}
+	
+forsec "soma" {
+
+		for (x) {
+			rdist=distance(x)
+			alpha_cal4(x)=gip3*(0.75+.25*MyExp(-rdist/100))
+			print x, rdist, alpha_cal4(x)
+		}
+	
+	}
+	
+forsec apical_list {
+	
+		for (x) {
+			rdist=distance(x)
+			alpha_cal4(x)=gip3*(0.75+.25*MyExp(-rdist/100))
+			print x, rdist, alpha_cal4(x)
+		}
+	
+	}
+	
+
+	
+forsec basal_tree_list {
+	
+		for (x) {
+			rdist=distance(x)
+			alpha_cal4(x)=gip3*(0.75+.25*MyExp(-rdist/100))
+			print x, rdist, alpha_cal4(x)
+		}
+	
+	}
+	
+if(geomnseg) {forall {
+    nseg = int((L/(d_lambda*lambda_f(freq))+0.9)/2)*2 + 1
+}
+}

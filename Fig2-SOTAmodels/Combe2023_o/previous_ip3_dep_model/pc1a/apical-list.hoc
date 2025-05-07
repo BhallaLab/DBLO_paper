@@ -1,0 +1,17 @@
+// This function makes a list with all dendritic sections in the apical trunk
+
+objref apical_list
+apical_list=new SectionList()
+
+forsec "apic" {
+apical_list.append()
+}
+ 
+/* Make a shape graph with apical trunk sections
+
+objref apical_list_shape
+apical_list_shape=new Shape()
+color_index=3
+apical_list_shape.color_list(apical_list,color_index)
+apical_list_shape.printfile("apical-list.eps")
+*/

@@ -1,0 +1,85 @@
+load_file("nrngui.hoc")
+
+xpanel("Combe et al 2022")
+  xlabel("Choose a simulation to run by clicking on a button below")
+  xlabel("Quit and restart if desired to run the other simulation")
+  xbutton("Soma 2s ramp control; figure 6A and 7A","{fig6A()}")
+  xbutton("Soma 2s ramp CCh; figure 6B and 7B","{fig6B()}")
+  xbutton("Dendrite 2s ramp control; figure 6C","{fig6C()}")
+  xbutton("Dendrite 2s ramp CCh; figure 4B2","{fig6D()}")
+  xbutton("Soma 2s ramp remove nanodomain; figure 7C","{fig7C()}")
+  xlabel("See the readme for instructions on how to create the other pairs of graphs and more.")
+xpanel()
+
+xpanel("Combe et al 2022 Alternate Morphologies")
+  xlabel("These are the alternate morphologies")
+  xlabel("Choose a simulation to run by clicking on a button below")
+  xlabel("Quit and restart if desired to run the other simulation")
+  xlabel("Amaral Morphology c80761")
+  xbutton("Soma 2s ramp; control","{amaralsoma()}")
+  xbutton("Soma 2s ramp; CCh","{amaralsomaCCh()}")
+  xbutton("Dendrite 2s ramp; control","{amaraldend()}")
+  xbutton("Dendrite 2s ramp; CCh","{amaraldendCCh()}")
+  xlabel("Morphology pc1a")
+  xbutton("Soma 2s ramp; control","{pc1asoma()}")
+  xbutton("Soma 2s ramp; CCh","{pc1asomaCCh()}")
+  xbutton("Dendrite 2s ramp; control","{pc1adend()}")
+  xbutton("Dendrite 2s ramp; CCh","{pc1adendCCh()}")
+  xlabel("See the readme for instructions on how to create the other pairs of graphs and more.")
+xpanel()
+
+proc fig6A() {
+load_file("Figure6A_7A.hoc")
+}
+
+proc fig6B() {
+load_file("Figure6B_7B.hoc")
+}
+
+proc fig6C() {
+load_file("Figure_6C.hoc")
+}
+
+proc fig6D() {
+load_file("Figure_6D.hoc")
+}
+
+proc fig7C() {
+load_file("Figure7C_noND.hoc")
+}
+
+proc fig6d() {
+load_file("Figure6_dendrite_noI2.hoc")
+}
+
+proc amaralsoma() {
+load_file("alternate_morphology_c80761_control_soma.hoc")
+}
+
+proc amaralsomaCCh() {
+load_file("alternate_morphology_c80761_CCh_soma.hoc")
+}
+
+proc amaraldend() {
+load_file("alternate_morphology_c80761_control_dendrite.hoc")
+}
+
+proc amaraldendCCh() {
+load_file("alternate_morphology_c80761_CCh_dendrite.hoc")
+}
+
+proc pc1asoma() {
+load_file("alternate_morphology_pc1a_control_soma.hoc")
+}
+
+proc pc1asomaCCh() {
+load_file("alternate_morphology_pc1a_CCh_soma.hoc")
+}
+
+proc pc1adend() {
+load_file("alternate_morphology_pc1a_control_dendrite.hoc")
+}
+
+proc pc1adendCCh() {
+load_file("alternate_morphology_pc1a_CCh_dendrite.hoc")
+}

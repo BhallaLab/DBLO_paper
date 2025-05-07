@@ -1,0 +1,37 @@
+load_file("nrngui.hoc")
+
+xpanel("Combe et al 2022")
+  xlabel("Choose a simulation to run by clicking on a button below")
+  xlabel("Quit and restart if desired to run the other simulation")
+  xbutton("Soma 2s ramp control; used in figures 7, 8, 9","{control()}")
+  xbutton("Soma 2s ramp original CCh; used in figures 7, 8, 9","{cch()}")
+  xlabel("Figure 9 simulations:")
+  xbutton("Carbachol simulation removed voltage dependence of TRPM4; figure 9 blue","{blue()}")
+  xlabel("The calcium concentration in the nanodomain from each segment in the model must be saved first")
+  xlabel("Before the model that reads that concentration can be run, to do this make a folder nanodomain_data and run the simulation below")
+  xbutton("Regenerate calcium nanodomain files from original Carbachol simulation","{save()}")
+  xbutton("Model without voltage dependence but with original model's calcium concentrations; figure 9 purple","{purple()}")
+  xlabel("See the readme for instructions on how to create the other pairs of graphs and more.")
+xpanel()
+
+
+proc control() {
+load_file("Figure8control.hoc")
+}
+
+proc cch() {
+load_file("Figure8cch.hoc")
+}
+
+proc blue() {
+load_file("Figure9cch_nov.hoc")
+}
+
+proc purple() {
+load_file("load_can_from_fig9.hoc")
+}
+
+proc save() {
+load_file("save_can_from_fig9.hoc")
+}
+
