@@ -1,5 +1,8 @@
-RA vs DBLO linear regressin - 0.60, pvalue 5.35e-46
-RA vs AP1 amp linear regressin - -0.55, pvalue 8.77e-38
-Highest RA model's DBLO - 23.272715857375122 mV and amp - 24.94062873555168 mV and RA - 99.66341387404654
-Lowest RA model's DBLO - -10.564166753281325 mV and amp - 114.36336245836966 mV and RA - 1.0091831999602338e-05
-Highest DBLO - 24.829717205532383 mV
+RA vs DBLO linear regressin - 0.89, pvalue 1.28e-33
+RA vs AP1 amp linear regressin - -0.77, pvalue 3.26e-20
+Highest DBLO model's DBLO - 21.429313180977058 mV and amp - 37.679500175889736 mV and RA - 19.588740705629313
+Lowest DBLO model's DBLO - -18.34913795660187 mV and amp - 133.25185746166767 mV and RA - 0.0036129271713770325
+DBLO vs AP1 amp linear regressin - -0.92, pvalue 0.00e+00
+Highest DBLO model's DBLO - 23.151721420162126 mV and amp - 30.09155589372031 mV and RA - 66.34702866027867
+Lowest DBLO model's DBLO - -18.534673515946537 mV and amp - 136.62022846407754 mV and RA - 0.00018738104697125038
+Highest DBLO - 23.151721420162126 mV

@@ -264,8 +264,8 @@ class NpEncoder(json.JSONEncoder):
 #######################################################################
 
 
-# for cells in validcells:
-for cells in ['2023_01_20_cell_3']:
+for cells in validcells:
+# for cells in ['2023_01_20_cell_3']:
     print(cells)
     for impmodel in impmodels_list:
         if impmodel["Parameters"]["notes"] == cells:
@@ -275,7 +275,7 @@ for cells in ['2023_01_20_cell_3']:
     # seeed = 1964186147
     print(seeed)
     Multiprocessthis_appendsave(
-       ourfunc, range(15000), [], ["tempactivemodels_imp.pkl"], seed=seeed, npool=70
+       ourfunc, range(30000), [], ["tempactivemodels_imp.pkl"], seed=seeed, npool=110
     )
 
     with open("tempactivemodels_imp.pkl", "rb") as f, open('activemodels_imp_Eb2_NaTallen.json', "a") as file:

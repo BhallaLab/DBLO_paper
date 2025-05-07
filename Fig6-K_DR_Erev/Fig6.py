@@ -5,6 +5,7 @@ os.environ["OMP_NUM_THREADS"] = "1"  # export OMP_NUM_THREADS=4
 import sys
 
 sys.path.insert(1, "../helperScripts")
+from DBLOutilities import PrintLogger as PrintLogger
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,14 +59,14 @@ for i, ax in enumerate([axA, axB, axC, axD]):
         ha="right",
     )
 
-
+sys.stdout = PrintLogger('NOTES.txt', 'w')
 #####################################
 if not os.path.exists('activemodels.json'):
     subprocess.call(["python3", "getbasemodels.py"])
 #######################################
 
 # Load models from the JSON file
-# df_expsummaryactiveF = pd.read_pickle("../helperScripts/expsummaryactiveF.pkl")
+df_expsummaryactiveF = pd.read_pickle("../helperScripts/expsummaryactiveF.pkl")
 basemodels_list = []
 file_path = "activemodels.json"
 with open(file_path, "r") as file:
@@ -75,8 +76,10 @@ with open(file_path, "r") as file:
         #     continue
         # if basemodel["Features"]["freq_1.5e-10"]<df_expsummaryactiveF.loc["freq_1.5e-10", "10th quantile"] or basemodel["Features"]["freq_1.5e-10"]>df_expsummaryactiveF.loc["freq_1.5e-10", "90th quantile"]:
         #     continue
-        basemodels_list.append(basemodel)
+        if (basemodel["Features"]["AP1_width_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_width_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "90th quantile"]):
+            basemodels_list.append(basemodel)
 
+print(f'Number of valid models: {len(basemodels_list)}')
 
 ### Exp without lJP correction ###
 LJP = 15e-3
@@ -94,7 +97,7 @@ axB.plot((T_150pA-stim_start_exp)*1e3, Vm_150pA*1e3, label='150 pA', c='C0')
 axB.plot((T_300pA-stim_start_exp)*1e3, Vm_300pA*1e3, label='300 pA', c='C9', alpha=0.5)
 axB.set_xlabel('Time (ms)')
 axB.set_ylabel('Voltage (mV)')
-axB.set_title('Representative exp')
+axB.set_title('Representative \n experimental recording')
 axB.set_xlim(-0.1*1e3, 0.6*1e3)
 axB.set_ylim(-0.100*1e3, 0.05*1e3)
 # axB.axhline(y=Features['E_rest_300'], color='black', linestyle='--', xmin=0, xmax=1)
@@ -143,9 +146,19 @@ axD.axhline(y=Features["DBL_1.5e-10"]*1e3, color='C2', linestyle='--')
 axD.axhline(y=Features["DBL_3e-10"]*1e3, color='lime', linestyle='--')
 axD.legend(frameon=False, ncols=2)
 
+axA.axhspan(23.6, 14.3, color='C2', alpha=0.3)
+axA.axhspan(14.3, 10, color='C8', alpha=0.3)
+axA.axvspan(-100, -85, color='C9', alpha=0.3)
 axA.scatter(np.array(EK_list)*1e3, np.array(DBLO150pA_list)*1e3, c='C7')
 axA.set_xlabel('K_DR Erev (mV)')
 axA.set_ylabel('DBLO (mV)')
+axA.scatter(np.array(EK_list)[lowDBLmodelidx]*1e3, np.array(DBLO150pA_list)[lowDBLmodelidx]*1e3, c='C3', s=100, marker='X')
+axA.scatter(np.array(EK_list)[highDBLmodelidx]*1e3, np.array(DBLO150pA_list)[highDBLmodelidx]*1e3, c='C2', s=100, marker='X')
+
+############# Stats #####################
+m, b, r, pvalue, _ = scs.linregress(np.array(EK_list)*1e3, np.array(DBLO150pA_list)*1e3)
+print('EK_list vs DBLO', f'{r:1.2f}', f'{pvalue:1.2e}')
+print(f'Max DBLO - {np.max(DBLO150pA_list)*1e3}\n')
 
 ######################
 sns.despine(fig=fig)
@@ -154,11 +167,3 @@ plt.savefig('Fig6.png', dpi=300)
 plt.show()
 
 
-############# Stats #####################
-m, b, r, pvalue, _ = scs.linregress(np.array(EK_list)*1e3, np.array(DBLO150pA_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-
-######### Write to NOTES.exe ###############
-with open('NOTES.txt', 'w') as f:
-    f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-    f.write(f'Max DBLO - {np.max(DBLO150pA_list)*1e3}\n')

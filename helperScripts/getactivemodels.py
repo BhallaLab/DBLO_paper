@@ -37,7 +37,7 @@ Featurelist = [
     # "sagV_m50",
     # "sagrat_m50",
     "freq_0",
-    # "AP1_amp_1.5e-10",
+    "AP1_amp_1.5e-10",
     # "APp_amp_1.5e-10",
     # "AP1_time_1.5e-10",
     # "APp_time_1.5e-10",
@@ -310,7 +310,7 @@ for cells in validcells:
     #     impmodel, bnspasmodel, onecomptmodel = ourfunc(i)
 
     Multiprocessthis_appendsave(
-       ourfunc, range(5000), [], ["tempactivemodels_imp.pkl", "tempactivemodels_bnspas.pkl", "tempactivemodels_1compt.pkl"], seed=seeed, npool=100
+       ourfunc, range(5000), [], ["tempactivemodels_imp.pkl", "tempactivemodels_bnspas.pkl", "tempactivemodels_1compt.pkl"], seed=seeed, npool=50
     )
 
 

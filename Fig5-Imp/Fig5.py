@@ -1,6 +1,12 @@
+# import pylustrator
+
+# pylustrator.start()
+
 import sys
 
 sys.path.insert(1, "../helperScripts")
+
+from DBLOutilities import PrintLogger as PrintLogger
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -117,7 +123,8 @@ for i, ax in enumerate([axC[0], axC[1]]):
         ha="right",
     )
 
-
+# f = open('NOTES.txt', 'w')
+sys.stdout = PrintLogger('NOTES.txt', 'w')
 ############ Panel A #######################
 image = plt.imread('ballandstick.png')
 position = axA.get_position()
@@ -332,6 +339,10 @@ with open(file_path, "r") as file:
         basemodel = json.loads(line)
         basemodel_pas_list.append(basemodel)
 
+print(f'Number of base supra 1compt models: {len(basemodel_1compt_list)}\n')
+print(f'Number of base supra imp models: {len(basemodel_imp_list)}\n')  
+print(f'Number of base supra pas models: {len(basemodel_pas_list)}\n')      
+
 df = pd.DataFrame(columns=["modelID", "type", "DBLO150\n(mV)", "spikes"])
 # df.loc[:,'notes'] = [a["Parameters"]["notes"] for a in basemodels_list]
 modelID = np.tile(np.arange(0,len(basemodel_1compt_list)), 3)
@@ -359,16 +370,17 @@ df = df.convert_dtypes()
 ### Stats ###
 impvs1comptvspas_anovaRM = pg.rm_anova(df, dv="DBLO150\n(mV)", within="modelID", subject="type")
 
-print('Repeated Measures ANOVA ', impvs1comptvspas_anovaRM)
+print(f'Repeated Measures ANOVA: {impvs1comptvspas_anovaRM} \n')
 
 impvs1compt = pg.ttest(x=list(df[df["type"] == "1compt"].loc[:, "DBLO150\n(mV)"]), y=list(df[df["type"] == "imp"].loc[:, "DBLO150\n(mV)"]), paired=True)
 impvspas = pg.ttest(x=list(df[df["type"] == "pas"].loc[:, "DBLO150\n(mV)"]), y=list(df[df["type"] == "imp"].loc[:, "DBLO150\n(mV)"]), paired=True)
 pasvs1compt = pg.ttest(x=list(df[df["type"] == "1compt"].loc[:, "DBLO150\n(mV)"]), y=list(df[df["type"] == "pas"].loc[:, "DBLO150\n(mV)"]), paired=True)
 
-print("paired ttest", "Imp vs 1compt", impvs1compt["p-val"].values[0])
-print("paired ttest", "Imp vs pas", impvspas["p-val"].values[0])
-print("paired ttest", "pas vs 1compt", pasvs1compt["p-val"].values[0])
-print('Mean DBLO at 150pA\n', df.groupby('type').mean()['DBLO150\n(mV)'])
+print(f'paired ttest, Imp vs 1compt, {impvs1compt["p-val"].values[0]}, \n')
+print(f'paired ttest, Imp vs pas, {impvspas["p-val"].values[0]}, \n')
+print(f'paired ttest, pas vs 1compt, {pasvs1compt["p-val"].values[0]}, \n')
+_ = "DBLO150\n(mV)"
+print(f'Mean DBLO at 150pA: {df.groupby("type").mean()[_]} \n')
 
 def statannotator(ax, xpair_list, y, d, pvalues_list):
     d_ = 0
@@ -495,8 +507,10 @@ if os.path.exists("charge_impmodels.pkl"):
 else:
     charge_impmodels = []
     charge_pasmodels = []
-    charge_impmodels = np.array(Multiprocessthis_appendsave(ourfunc, basemodel_imp_list, [charge_impmodels], ["charge_impmodels.pkl"], seed=1213, npool=0.1))
-    charge_pasmodels = np.array(Multiprocessthis_appendsave(ourfunc, basemodel_pas_list, [charge_pasmodels], ["charge_pasmodels.pkl"], seed=1213, npool=0.1))
+    charge_impmodels = np.array(Multiprocessthis_appendsave(ourfunc, basemodel_imp_list, [charge_impmodels], ["charge_impmodels.pkl"], seed=1213, npool=0.8))
+    charge_pasmodels = np.array(Multiprocessthis_appendsave(ourfunc, basemodel_pas_list, [charge_pasmodels], ["charge_pasmodels.pkl"], seed=1213, npool=0.8))
+    charge_impmodels = charge_impmodels[0]
+    charge_pasmodels = charge_pasmodels[0]
 
 df["Backprop charge \n(pF)"] = np.concatenate([np.repeat(None, len(basemodel_1compt_list)),-1*charge_impmodels,-1*charge_pasmodels])
 df_charge = df[df["type"] != "1compt"]
@@ -568,7 +582,7 @@ Vdiff_pas = Vmvec_pas - Vmvec_dend0_pas
 Iaxial_pas_trace = Vdiff_pas/((moose.element('model/elec/soma').Ra + moose.element('model/elec/dend0').Ra)/2)
 axG.plot(tvec_pas*1e3, Vmvec_pas*1e3, label='pas', color="C8")
 
-axG.set_xlim(510,570)
+axG.set_xlim(530,570)
 axG.set_ylim(-95,-65)
 axG.set_xlabel('Time (ms)')
 axG.set_ylabel('Voltage\n(mV)')
@@ -581,15 +595,30 @@ axG_.plot(tvec_imp*1e3, Iaxial_pas_trace*-1e9, label='pas', color="C8", linestyl
 axG_inset = fig.add_axes([0.73, 0.12, 0.08, 0.035])
 axG_inset.plot(tvec_imp*1e3, Vmvec_imp*1e3, color="C2")
 axG_inset.plot(tvec_pas*1e3, Vmvec_pas*1e3, color="C8")
-axG_inset.set_xlim(510,570)
+axG_inset.set_xlim(530,570)
 axG_inset.tick_params(bottom=False, labelbottom=False, left=False, labelleft=False)
 axG_inset.set_facecolor('none')
 
 axG_.set_ylabel('Axial current (nA)')
-axG_.set_ylim(-2,2)
+axG_.set_ylim(-11,3)
 #################################################################
 
+########################### Some analysis ######################
+print('1compt', np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]<10), len(df[df["type"]=="1compt"]["DBLO150\n(mV)"]) - np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]<10) - np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]>=14.3), np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]>=14.3) )
+print('pas', np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]<10), len(df[df["type"]=="pas"]["DBLO150\n(mV)"]) - np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]<10) - np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]>=14.3), np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]>=14.3) )
+print('imp', np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]<10), len(df[df["type"]=="imp"]["DBLO150\n(mV)"]) - np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]<10) - np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]>=14.3), np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]>=14.3) )
 
+_ = "DBLO150\n(mV)"
+print(f'Minimum difference between DBLO of imp and 1compt pairs: {np.min(np.array(df[df["type"]=="imp"][_]) - np.array(df[df["type"]=="1compt"][_]))}')
+print(f'Mean difference between DBLO of imp and 1compt pairs: {np.mean(np.array(df[df["type"]=="imp"][_]) - np.array(df[df["type"]=="1compt"][_]))}')
+print(f'Maximum difference between DBLO of imp and 1compt pairs: {np.max(np.array(df[df["type"]=="imp"][_]) - np.array(df[df["type"]=="1compt"][_]))}')
+
+_ = list(df[df["type"] == "imp"].loc[:, "DBLO150\n(mV)"])
+print(f'Max DBLO in imp models - {max(_)}')
+
+#########################################################################
+
+# f.close()
 ## show plot ##
 sns.despine(fig=fig)
 axB[0].spines["bottom"].set_visible(False)
@@ -597,20 +626,15 @@ axG.spines["right"].set_visible(True)
 axG_inset.spines["bottom"].set_visible(False)
 axG_inset.spines["left"].set_visible(False)
 
-plt.savefig('Fig5.png', dpi=300)
+
 # plt.savefig('Fig5.svg', dpi=300)
 # plt.savefig('Fig5.pdf', dpi=300)
+#% start: automatic generated code from pylustrator
+plt.figure(1).ax_dict = {ax.get_label(): ax for ax in plt.figure(1).axes}
+import matplotlib as mpl
+getattr(plt.figure(1), '_pylustrator_init', lambda: ...)()
+plt.figure(1).axes[10].legend(loc=(0.6577, 0.352), frameon=False)
+plt.figure(1).axes[12].set(position=[0.5996, 0.1161, 0.08, 0.035])
+#% end: automatic generated code from pylustrator
+plt.savefig('Fig5.png', dpi=300)
 plt.show()
-
-
-########################### Some analysis ######################
-print('1compt', np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]<10), len(df[df["type"]=="1compt"]["DBLO150\n(mV)"]) - np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]<10) - np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]>=14.3), np.sum(df[df["type"]=="1compt"]["DBLO150\n(mV)"]>=14.3) )
-print('pas', np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]<10), len(df[df["type"]=="pas"]["DBLO150\n(mV)"]) - np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]<10) - np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]>=14.3), np.sum(df[df["type"]=="pas"]["DBLO150\n(mV)"]>=14.3) )
-print('imp', np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]<10), len(df[df["type"]=="imp"]["DBLO150\n(mV)"]) - np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]<10) - np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]>=14.3), np.sum(df[df["type"]=="imp"]["DBLO150\n(mV)"]>=14.3) )
-
-print(np.min(np.array(df[df["type"]=="imp"]["DBLO150\n(mV)"]) - np.array(df[df["type"]=="1compt"]["DBLO150\n(mV)"])))
-print(np.mean(np.array(df[df["type"]=="imp"]["DBLO150\n(mV)"]) - np.array(df[df["type"]=="1compt"]["DBLO150\n(mV)"])))
-print(np.max(np.array(df[df["type"]=="imp"]["DBLO150\n(mV)"]) - np.array(df[df["type"]=="1compt"]["DBLO150\n(mV)"])))
-
-_ = list(df[df["type"] == "imp"].loc[:, "DBLO150\n(mV)"])
-print(f'Max DBLO in imp models - {max(_)}')

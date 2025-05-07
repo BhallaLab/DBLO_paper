@@ -1,1 +1,4 @@
-0.95, 4.69e-114Max DBLO - 18.87354090310153
+Number of valid models: 56
+EK_list vs DBLO 0.96 1.33e-30
+Max DBLO - 21.415827504319196
+

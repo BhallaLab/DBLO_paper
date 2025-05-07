@@ -19,8 +19,8 @@ ECa = 0.140 #from Deepanjali data
 Em = -0.065
 
 ###################################
-m_vhalf_inf, m_slope_inf = -0.05132511, 0.00747505
-h_vhalf_inf, h_slope_inf = -6.33730481e-02, -9.05936563e-03
+m_vhalf_inf, m_slope_inf = -0.05132511+10e-3, 0.00747505 ##I had incorrectly assumed no LJP correction before and corrected it myself. Now have corrected the incorrect correction.
+h_vhalf_inf, h_slope_inf = -6.33730481e-02+10e-3, -9.05936563e-03
 s_vhalf_inf, s_slope_inf, s_A, s_B, s_C, s_D, s_E, s_F = 1,-0.01, 100,1e-50,0,0,-1e-50, 1e-3 #The F term determines the Tau
 ###################################
 
@@ -115,18 +115,20 @@ def Na_T_Chan(name):
 if __name__ == "__main__":
     moose.Neutral('library')
     Na_T_Chan('Na_T_Chan')
-    plt.figure()
-    plt.plot(v*1e-3, (moose.element('library/Na_T_Chan/gateX').tableA/moose.element('library/Na_T_Chan/gateX').tableB)**3, label='nInf')
-    plt.plot(v*1e-3, moose.element('library/Na_T_Chan/gateY').tableA/moose.element('library/Na_T_Chan/gateY').tableB, label='hInf')
-    plt.plot(v*1e-3, moose.element('library/Na_T_Chan/gateZ').tableA/moose.element('library/Na_T_Chan/gateZ').tableB, label='sInf')
-    plt.ylabel('Inf')
-    plt.legend()
-    plt.grid()
-    plt.figure()
-    plt.plot(v*1e-3, 1/moose.element('library/Na_T_Chan/gateX').tableB, label='nTau')
-    plt.plot(v*1e-3, 1/moose.element('library/Na_T_Chan/gateY').tableB, label='hTau')
-    plt.plot(v*1e-3, 1/moose.element('library/Na_T_Chan/gateZ').tableB, label='sTau')
-    plt.ylabel('Tau')
-    plt.legend()
-    plt.grid()
+
+    fig, axs = plt.subplots(2,1)
+    axs[0].plot(v, (moose.element('library/Na_T_Chan/gateX').tableA/moose.element('library/Na_T_Chan/gateX').tableB)**3, label='nInf')
+    axs[0].plot(v, moose.element('library/Na_T_Chan/gateY').tableA/moose.element('library/Na_T_Chan/gateY').tableB, label='lInf')
+    axs[0].plot(v, moose.element('library/Na_T_Chan/gateZ').tableA/moose.element('library/Na_T_Chan/gateZ').tableB, label='sInf')
+    axs[0].set_ylabel('Inf')
+    axs[0].legend()
+    axs[0].grid()
+
+    axs[1].plot(v, 1/moose.element('library/Na_T_Chan/gateX').tableB, label='nTau')
+    axs[1].plot(v, 1/moose.element('library/Na_T_Chan/gateY').tableB, label='lTau')
+    axs[1].plot(v, 1/moose.element('library/Na_T_Chan/gateZ').tableB, label='sTau')
+    axs[1].set_ylabel('Tau')
+    axs[1].legend()
+    axs[1].grid()
+
     plt.show()

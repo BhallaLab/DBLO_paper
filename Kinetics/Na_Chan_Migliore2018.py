@@ -43,6 +43,7 @@ def Na_Chan(name):
     Na.Xpower = 3.0
     Na.Ypower = 1
     Na.Zpower = 1
+    Na.useConcentration = False
 
     sh2   = 0
     tha  =  -30
@@ -124,18 +125,20 @@ def Na_Chan(name):
 if __name__ == "__main__":
     moose.Neutral('library')
     Na_Chan('Na_Chan')
-    plt.figure()
-    plt.plot(v, (moose.element('library/Na_Chan/gateX').tableA/moose.element('library/Na_Chan/gateX').tableB)**3, label='nInf')
-    plt.plot(v, moose.element('library/Na_Chan/gateY').tableA/moose.element('library/Na_Chan/gateY').tableB, label='lInf')
-    plt.plot(v, moose.element('library/Na_Chan/gateZ').tableA/moose.element('library/Na_Chan/gateZ').tableB, label='sInf')
-    plt.ylabel('Inf')
-    plt.legend()
-    plt.grid()
-    plt.figure()
-    plt.plot(v, 1/moose.element('library/Na_Chan/gateX').tableB, label='nTau')
-    plt.plot(v, 1/moose.element('library/Na_Chan/gateY').tableB, label='lTau')
-    plt.plot(v, 1/moose.element('library/Na_Chan/gateZ').tableB, label='sTau')
-    plt.ylabel('Tau')
-    plt.legend()
-    plt.grid()
+
+    fig, axs = plt.subplots(2,1)
+    axs[0].plot(v, (moose.element('library/Na_Chan/gateX').tableA/moose.element('library/Na_Chan/gateX').tableB)**3, label='nInf')
+    axs[0].plot(v, moose.element('library/Na_Chan/gateY').tableA/moose.element('library/Na_Chan/gateY').tableB, label='lInf')
+    # axs[0].plot(v, moose.element('library/Na_Chan/gateZ').tableA/moose.element('library/Na_Chan/gateZ').tableB, label='sInf')
+    axs[0].set_ylabel('Inf')
+    axs[0].legend()
+    axs[0].grid()
+
+    axs[1].plot(v, 1/moose.element('library/Na_Chan/gateX').tableB, label='nTau')
+    axs[1].plot(v, 1/moose.element('library/Na_Chan/gateY').tableB, label='lTau')
+    # axs[1].plot(v, 1/moose.element('library/Na_Chan/gateZ').tableB, label='sTau')
+    axs[1].set_ylabel('Tau')
+    axs[1].legend()
+    axs[1].grid()
+
     plt.show()

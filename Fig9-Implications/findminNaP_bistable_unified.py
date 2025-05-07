@@ -144,7 +144,8 @@ with open(file_path, "r") as file:
     for line in file:
         basemodel = json.loads(line)
         if (basemodel["Features"]["AP1_amp_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_amp_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_amp_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_amp_1.5e-10", "90th quantile"]):
-            basemodels_list.append(basemodel)
+            if (basemodel["Features"]["AP1_width_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_width_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "90th quantile"]):
+                basemodels_list.append(basemodel)
 
 
 ######################################################################################
@@ -327,7 +328,7 @@ def ourfunc_(i):
 #     lowerbound_list.append(lowerbound)
 
 lowerbound_list = Multiprocessthis_appendsave(
-   ourfunc_, range(len(np.array(basemodels_list))), [lowerbound_list], [], seed=1213242, npool=10
+   ourfunc_, range(len(np.array(basemodels_list))), [lowerbound_list], [], seed=1213242, npool=110
 )
 
 np.save('Na_P_Gbar_lowerbound_bistable_unified.npy', lowerbound_list[0])

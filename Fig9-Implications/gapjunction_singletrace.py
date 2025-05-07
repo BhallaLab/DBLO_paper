@@ -77,11 +77,11 @@ def doesitspike(Gk):
 
 tvec_gap, Vmvec1_gap, Vmvec2_gap = doesitspike(np.mean([gapmodel_imp_list[-1]["gapjuncfeatures"]["minGk1"], gapmodel_imp_list[-1]["gapjuncfeatures"]["minGk0"]]))
 
-# plt.plot(tvec_gap, Vmvec1_gap, label='Vmvec1')
-# plt.plot(tvec_gap, Vmvec2_gap, label='Vmvec2')
-# plt.legend()
-# plt.xlabel('Time (s)')
-# plt.ylabel('Membrane potential (V)')
-# plt.show()
+plt.plot(tvec_gap, Vmvec1_gap, label='Vmvec1')
+plt.plot(tvec_gap, Vmvec2_gap, label='Vmvec2')
+plt.legend()
+plt.xlabel('Time (s)')
+plt.ylabel('Membrane potential (V)')
+plt.show()
 
 np.savez('Vmvec_gap.npz', tvec_gap=tvec_gap, Vmvec1_gap=Vmvec1_gap, Vmvec2_gap=Vmvec2_gap)

@@ -1,17 +1,113 @@
-Kruskal-Wallis H-test KruskalResult(statistic=13.44263211169914, pvalue=0.0012049513866895178)
-Dunn’s test            Gouwens  Migliore    Royeck
-Gouwens   1.000000  0.001032  0.308556
-Migliore  0.001032  1.000000  0.004275
-Royeck    0.308556  0.004275  1.000000
-Mean DBLO at 150pA: type
-Gouwens     -8.361021
-Migliore    -16.71347
-Royeck     -12.202675
+Number of valid NaTGou models: 156
+Number of valid NaTRoy models: 81
+Number of valid NaMig models: 70
+Number of valid NaMiginfGoutau models: 144
+Number of valid NaMigtauGouinf models: 130
+Number of valid NaMiginftauhGoutaum models: 72
+Number of valid NaMiginftaumGoutauh models: 127
+Kruskal-Wallis H-test  KruskalResult(statistic=128.77180663725562, pvalue=1.0903287815471628e-28)
+Dunn’s test
+                      Gou      Mig  ...  Mig$_{G\tau}$      Roy
+Gou             1.00e+00 3.19e-24  ...       1.48e-01 1.00e+00
+Mig             3.19e-24 1.00e+00  ...       6.07e-15 5.72e-26
+Mig$_{G\infty}$ 9.00e-21 3.48e-01  ...       9.98e-11 4.50e-22
+Mig$_{G\tau h}$ 1.00e+00 3.16e-19  ...       1.00e+00 1.50e-01
+Mig$_{G\tau m}$ 6.04e-29 1.00e+00  ...       1.46e-18 3.35e-30
+Mig$_{G\tau}$   1.48e-01 6.07e-15  ...       1.00e+00 7.43e-04
+Roy             1.00e+00 5.72e-26  ...       7.43e-04 1.00e+00
+
+[7 rows x 7 columns]
+Mean DBLO at 150pA
+ type
+Gou               -1.19e+01
+Mig               -1.64e+01
+Mig$_{G\infty}$   -1.55e+01
+Mig$_{G\tau h}$   -1.23e+01
+Mig$_{G\tau m}$   -1.69e+01
+Mig$_{G\tau}$     -1.29e+01
+Roy               -1.12e+01
+Name: DBLO150 (mV), dtype: Float64 type
+Gou               2.84e+00
+Mig               1.56e+00
+Mig$_{G\infty}$   2.18e+00
+Mig$_{G\tau h}$   2.71e+00
+Mig$_{G\tau m}$   1.66e+00
+Mig$_{G\tau}$     2.76e+00
+Roy               2.26e+00
 Name: DBLO150 (mV), dtype: Float64
-std DBLO at 150pA: type
-Gouwens     9.440301
-Migliore    2.278853
-Royeck      3.705772
+Max DBLO at 150pA
+ type
+Gou               -5.54e+00
+Mig               -1.29e+01
+Mig$_{G\infty}$   -1.04e+01
+Mig$_{G\tau h}$   -6.03e+00
+Mig$_{G\tau m}$   -1.33e+01
+Mig$_{G\tau}$     -6.30e+00
+Roy               -5.81e+00
 Name: DBLO150 (mV), dtype: Float64
-Max DBLO in Gouwens - 15.117549596074669
-Number of high DBLO Models in Gouwens - 1Number of moderate DBLO Models in Gouwens - 4
+Kruskal-Wallis H-test  KruskalResult(statistic=124.60228028697088, pvalue=8.769172624292452e-28)
+Dunn’s test
+                      Gou      Mig  ...  Mig$_{G\tau}$      Roy
+Gou             1.00e+00 4.47e-23  ...       1.44e-01 8.68e-01
+Mig             4.47e-23 1.00e+00  ...       5.02e-14 2.19e-25
+Mig$_{G\infty}$ 1.61e-19 3.53e-01  ...       8.16e-10 1.76e-21
+Mig$_{G\tau h}$ 1.00e+00 8.19e-19  ...       1.00e+00 1.66e-01
+Mig$_{G\tau m}$ 2.69e-28 1.00e+00  ...       5.14e-18 3.95e-30
+Mig$_{G\tau}$   1.44e-01 5.02e-14  ...       1.00e+00 4.25e-04
+Roy             8.68e-01 2.19e-25  ...       4.25e-04 1.00e+00
+
+[7 rows x 7 columns]
+Mean DBLO at 150pA
+ type
+Gou               1.02e+01
+Mig               1.82e+01
+Mig$_{G\infty}$   1.64e+01
+Mig$_{G\tau h}$   1.06e+01
+Mig$_{G\tau m}$   2.13e+01
+Mig$_{G\tau}$     1.15e+01
+Roy               9.11e+00
+Name: max I_K_DR (nA), dtype: Float64 type
+Gou               3.38e+00
+Mig               5.80e+00
+Mig$_{G\infty}$   6.75e+00
+Mig$_{G\tau h}$   3.29e+00
+Mig$_{G\tau m}$   1.02e+01
+Mig$_{G\tau}$     3.70e+00
+Roy               2.29e+00
+Name: max I_K_DR (nA), dtype: Float64
+######## D ####################
+Gou SignificanceResult(statistic=-0.9835216765974931, pvalue=2.6275116425963337e-116)
+NaTRoy SignificanceResult(statistic=-0.9579042457091238, pvalue=1.4227371866442583e-44)
+NaMig SignificanceResult(statistic=-0.9946461376957397, pvalue=9.046433819210742e-69)
+NaMiginfGoutau SignificanceResult(statistic=-0.9891327063740857, pvalue=3.9760924333886525e-120)
+NaMigtauGouinf SignificanceResult(statistic=-0.9965805896571029, pvalue=1.7385519457237795e-140)
+NaMiginftauhGoutaum SignificanceResult(statistic=-0.9971702360280407, pvalue=2.017538775754943e-80)
+NaMiginftaumGoutauh SignificanceResult(statistic=-0.9912530464941882, pvalue=8.276101349997275e-112)
+All SignificanceResult(statistic=-0.9935574667788233, pvalue=0.0)
+######## E ####################
+Gou SignificanceResult(statistic=0.45591819316906634, pvalue=2.2194369120472075e-09)
+NaTRoy SignificanceResult(statistic=0.6436088527551942, pvalue=9.141100856874725e-11)
+NaMig SignificanceResult(statistic=0.6361823112588575, pvalue=3.2518680772149648e-09)
+NaMiginfGoutau SignificanceResult(statistic=0.5231974921630094, pvalue=1.7235542528836184e-11)
+NaMigtauGouinf SignificanceResult(statistic=0.7873574676699122, pvalue=1.1492895631195598e-28)
+NaMiginftauhGoutaum SignificanceResult(statistic=0.8039102193067079, pvalue=1.874284367692699e-17)
+NaMiginftaumGoutauh SignificanceResult(statistic=0.4454501781027372, pvalue=1.5396670746785363e-07)
+All SignificanceResult(statistic=-0.3335401476788955, pvalue=1.0098964112780244e-21)
+######## F ####################
+Gou SignificanceResult(statistic=-0.7574987656671887, pvalue=2.546480187524655e-30)
+NaTRoy SignificanceResult(statistic=-0.531746346862083, pvalue=3.252683823373384e-07)
+NaMig SignificanceResult(statistic=-0.9475563114527983, pvalue=2.0845463653095206e-35)
+NaMiginfGoutau SignificanceResult(statistic=-0.8227409565249164, pvalue=1.1776284130883792e-36)
+NaMigtauGouinf SignificanceResult(statistic=-0.8815010166124838, pvalue=1.5393304602720069e-43)
+NaMiginftauhGoutaum SignificanceResult(statistic=-0.9575956489884576, pvalue=1.4648154436085122e-39)
+NaMiginftaumGoutauh SignificanceResult(statistic=-0.8320800106404872, pvalue=8.587601326171294e-34)
+All SignificanceResult(statistic=-0.6437768850277286, pvalue=1.696539544414457e-92)
+######## G ####################
+Gou SignificanceResult(statistic=0.9872495668322276, pvalue=0.0)
+NaTRoy SignificanceResult(statistic=0.8966574219676561, pvalue=3.1203356729684288e-148)
+NaMig SignificanceResult(statistic=0.99389843311035, pvalue=0.0)
+NaMiginfGoutau SignificanceResult(statistic=0.9885217958933983, pvalue=0.0)
+NaMigtauGouinf SignificanceResult(statistic=0.9924390883650103, pvalue=0.0)
+NaMiginftauhGoutaum SignificanceResult(statistic=0.993438741790934, pvalue=0.0)
+NaMiginftaumGoutauh SignificanceResult(statistic=0.9901387000022146, pvalue=0.0)
+All SignificanceResult(statistic=0.9653256954409716, pvalue=0.0)

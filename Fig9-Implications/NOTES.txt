@@ -1,47 +1,26 @@
-highDBLOmodel["Features"]["DBLO_1.5e-10"] = 0.01806249456515506
-sum(DBLO_list>14.3e-3) = 46
-mdf.summary()=<class 'statsmodels.iolib.summary2.Summary'>
-"""
-         Mixed Linear Model Regression Results
-========================================================
-Model:             MixedLM Dependent Variable: Gbarratio
-No. Observations:  1171    Method:             REML     
-No. Groups:        11      Scale:              0.2888   
-Min. group size:   12      Log-Likelihood:     -968.3199
-Max. group size:   236     Converged:          Yes      
-Mean group size:   106.5                                
---------------------------------------------------------
-           Coef.  Std.Err.    z    P>|z|  [0.025  0.975]
---------------------------------------------------------
-Intercept   2.279    0.596   3.826 0.000   1.112   3.447
-DBLO      -66.522    5.033 -13.217 0.000 -76.386 -56.657
-Group Var   3.896    3.272                              
-========================================================
+Highest DBLO model 0.019060506324367538
+Number of valid unified models: 234
+Number of high DBLO models: 55
+DBLO vs Gbarratio PearsonRResult(statistic=-0.6143618440228931, pvalue=1.1279154149375895e-25)
+DBLO vs CaL = (-1.0872634062356137, 130.70251115497422, -0.700932252844055, 6.608700542834156e-36)
 
-"""
-mdf.random_effects={'2023_01_04_cell_2': Group   -0.236088
-dtype: float64, '2023_01_04_cell_3': Group    1.807343
-dtype: float64, '2023_01_04_cell_4': Group   -0.420598
-dtype: float64, '2023_01_04_cell_5': Group    1.48526
-dtype: float64, '2023_01_04_cell_6': Group   -1.679396
-dtype: float64, '2023_01_20_cell_2': Group   -1.045646
-dtype: float64, '2023_01_20_cell_3': Group    4.777891
-dtype: float64, '2023_01_20_cell_4': Group   -1.700193
-dtype: float64, '2023_02_13_cell_1': Group   -1.243809
-dtype: float64, '2023_02_13_cell_2': Group   -0.362335
-dtype: float64, '2023_02_13_cell_4': Group   -1.38243
-dtype: float64}
-mdf.pvalues=Intercept    1.302619e-04
-DBLO         6.974737e-40
-Group Var    2.669081e-02
-dtype: float64
-DBLO vs CaL = (-0.06975728911532277, 113.61529692761619, -0.07523563942745298, 0.010010813189765919)
-DBLO vs CaN = (-0.12898955127191694, 127.14602399429982, -0.06981539130006438, 0.01687414322420535)
-DBLO vs CaR = (1.1386697838190538, 112.29214408150659, 0.7990329932001432, 1.6291478531212405e-260)
-DBLO vs CaT = (-0.07948587912943661, 103.8179178534148, -0.47212519114830415, 4.7384375315379e-66)
-DBLO_list_filtered_unified vs minNaP_list_filtered_unified = -0.53
-np.nanmean(highDBLO_minNaP) =1.77e-08, np.nanstd(highDBLO_minNaP) =2.74e-09
-np.nanmean(lowDBLO_minNaP) =3.99e-08, np.nanstd(lowDBLO_minNaP) =1.07e-08
-highDBLO_minNaP vs lowDBLO_minNaP ttest p_value =1.865e-63
-DBLO300 vs Gkmin 1 = (0.2330358673842143, 9.457041458653018, 0.673861245210385, 7.702889045276744e-156)
-DBLO300 vs Gkmin 2 = (0.17502925743981387, 8.64080897701232, 0.557345789012883, 1.5660951508335488e-96)
+DBLO vs CaN = (-2.163389668404065, 161.13866960003287, -0.7088328168762469, 5.012302824456664e-37)
+
+DBLO vs CaR = (2.482911521635851, 101.49574009878953, 0.9129887041271895, 2.67488889433736e-92)
+
+DBLO vs CaT = (-0.15468907432698423, 105.12582616355604, -0.8061591356013019, 8.682997789197276e-55)
+
+DBLO_list_filtered_unified vs minNaP_list_filtered_unified = -0.95
+
+NaP number of models: 196
+np.nanmean(highDBLO_minNaP) =1.63e-08, np.nanstd(highDBLO_minNaP) =2.06e-09
+
+np.nanmean(moderateDBLO_minNaP) =3.28e-08, np.nanstd(moderateDBLO_minNaP) =5.67e-09
+
+highDBLO_minNaP vs lowDBLO_minNaP ttest p_value =6.431e-39
+
+Number of minNaP models that did not become bistable: 38
+DBLO300 vs Gkmin 1 = (0.0678840876799516, 10.69370289761394, 0.5215521172402778, 1.0062067140854459e-17, 234)
+
+DBLO300 vs Gkmin 2 = (0.057862030892720545, 9.250220531214325, 0.4121185783881299, 5.220670521273282e-11, 234)
+

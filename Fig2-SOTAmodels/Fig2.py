@@ -96,9 +96,46 @@ axA.axhline(y=features_['DBL_1.5e-10']*1e3, color='black', linestyle='--')
 print("Migliore LJP not corrected", features_['DBL_1.5e-10'], features_['DBLO_1.5e-10'])
 f.write(f"Migliore LJP not corrected: {features_['DBL_1.5e-10']=}, {features_['DBLO_1.5e-10']=}\n")
 
-### Migliore 2018 LJP corrected ###
-model_dir = 'MiglioreEtAl2018PLOSCompBiol2018_o'
-output = np.load(f'{model_dir}/output_LJP.npz')
+# ### Migliore 2018 LJP corrected ###
+# model_dir = 'MiglioreEtAl2018PLOSCompBiol2018_o'
+# output = np.load(f'{model_dir}/output_LJP.npz')
+# delay, amp, t_vec, v_vec = output['delay'], output['amp'], output['t_vec'], output['v_vec']
+# # print(delay, amp, t_vec, v_vec)
+
+# features_ = {}
+# features_ = fts.ftscalc_helper(
+#     features_,
+#     t_vec,
+#     v_vec*0,
+#     t_vec,
+#     v_vec*0,
+#     t_vec,
+#     v_vec*0,
+#     t_vec,
+#     v_vec,
+#     t_vec,
+#     v_vec,
+#     delay,
+#     delay+0.5,
+# )
+
+# axB.plot((t_vec-0.2)*1e3,v_vec*1e3, c='C2')
+# line, = axB.plot([], alpha = 0)
+# axB.set_xlim(-0.1*1e3, 0.6*1e3)
+# axB.set_title(f'Migliore et. al., 2018 LJP corrected\n {amp*1e12:.0f}pA current injected')
+# axB.set_ylim(-0.095*1e3, 0.05*1e3)
+# axB.set_xlabel('Time (ms)')
+# axB.set_ylabel('Voltage (mV)')
+# # axB.legend([line], [f'DBL = {DBL[1]:.1e}V'], loc='best', frameon=False)
+# axB.axhline(y=features_['E_rest_150']*1e3, color='black', linestyle='solid')
+# axB.axhline(y=features_['DBL_1.5e-10']*1e3, color='black', linestyle='--')
+
+# print("Migliore LJP corrected", features_['DBL_1.5e-10'], features_['DBLO_1.5e-10'])
+# f.write(f"Migliore LJP corrected: {features_['DBL_1.5e-10']=}, {features_['DBLO_1.5e-10']=}\n")
+
+### Combe 2023 ###
+model_dir = 'Combe2023_o'
+output = np.load(f'{model_dir}/output.npz')
 delay, amp, t_vec, v_vec = output['delay'], output['amp'], output['t_vec'], output['v_vec']
 # print(delay, amp, t_vec, v_vec)
 
@@ -119,19 +156,19 @@ features_ = fts.ftscalc_helper(
     delay+0.5,
 )
 
-axB.plot((t_vec-0.2)*1e3,v_vec*1e3, c='C2')
-line, = axB.plot([], alpha = 0)
-axB.set_xlim(-0.1*1e3, 0.6*1e3)
-axB.set_title(f'Migliore et. al., 2018 LJP corrected\n {amp*1e12:.0f}pA current injected')
-axB.set_ylim(-0.095*1e3, 0.05*1e3)
-axB.set_xlabel('Time (ms)')
-axB.set_ylabel('Voltage (mV)')
-# axB.legend([line], [f'DBL = {DBL[1]:.1e}V'], loc='best', frameon=False)
-axB.axhline(y=features_['E_rest_150']*1e3, color='black', linestyle='solid')
-axB.axhline(y=features_['DBL_1.5e-10']*1e3, color='black', linestyle='--')
+axE.plot((t_vec-0.2)*1e3,v_vec*1e3, c='C2')
+line, = axE.plot([], alpha = 0)
+axE.set_xlim(-0.1*1e3, 0.6*1e3)
+axE.set_title(f'Combe et. al., 2023 \n {amp*1e12:.0f}pA current injected')
+axE.set_ylim(-0.095*1e3, 0.05*1e3)
+axE.set_xlabel('Time (ms)')
+axE.set_ylabel('Voltage (mV)')
+# axE.legend([line], [f'DBL = {DBL[1]:.1e}V'], loc='best', frameon=False)
+axE.axhline(y=features_['E_rest_150']*1e3, color='black', linestyle='solid')
+axE.axhline(y=features_['DBL_1.5e-10']*1e3, color='black', linestyle='--')
 
-print("Migliore LJP corrected", features_['DBL_1.5e-10'], features_['DBLO_1.5e-10'])
-f.write(f"Migliore LJP corrected: {features_['DBL_1.5e-10']=}, {features_['DBLO_1.5e-10']=}\n")
+print("Combe 2023", features_['DBL_1.5e-10'], features_['DBLO_1.5e-10'])
+f.write(f"Combe 2023: {features_['DBL_1.5e-10']=}, {features_['DBLO_1.5e-10']=}\n")
 
 ## Second Turi et al ###
 model_dir = 'Turi_et_al_2018_o'
@@ -237,16 +274,16 @@ features_ = fts.ftscalc_helper(
     delay+0.5,
 )
 
-axE.plot((t_vec-0.2)*1e3,v_vec*1e3, c='C8')
+axB.plot((t_vec-0.2)*1e3,v_vec*1e3, c='C8')
 line, = axB.plot([], alpha = 0)
-axE.set_xlim(-0.1*1e3, 0.6*1e3)
-axE.set_title(f'Tomko et. al., 2021\n {amp*1e12:.0f}pA current injected')
-axE.set_ylim(-0.095*1e3, 0.05*1e3)
-axE.set_xlabel('Time (ms)')
-axE.set_ylabel('Voltage (mV)')
-# axE.legend([line], [f'DBL = {DBL[1]:.1e}V'], loc='best', frameon=False)
-axE.axhline(y=features_['E_rest_150']*1e3, color='black', linestyle='solid')
-axE.axhline(y=features_['DBL_1.5e-10']*1e3, color='black', linestyle='--')
+axB.set_xlim(-0.1*1e3, 0.6*1e3)
+axB.set_title(f'Tomko et. al., 2021\n {amp*1e12:.0f}pA current injected')
+axB.set_ylim(-0.095*1e3, 0.05*1e3)
+axB.set_xlabel('Time (ms)')
+axB.set_ylabel('Voltage (mV)')
+# axB.legend([line], [f'DBL = {DBL[1]:.1e}V'], loc='best', frameon=False)
+axB.axhline(y=features_['E_rest_150']*1e3, color='black', linestyle='solid')
+axB.axhline(y=features_['DBL_1.5e-10']*1e3, color='black', linestyle='--')
 
 print("Tomko LJP not corrected", features_['DBL_1.5e-10'], features_['DBLO_1.5e-10'])
 f.write(f"Tomko LJP not corrected: {features_['DBL_1.5e-10']=}, {features_['DBLO_1.5e-10']=}\n")

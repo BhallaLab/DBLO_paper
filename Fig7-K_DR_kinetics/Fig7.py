@@ -2,6 +2,7 @@ import sys
 
 sys.path.insert(1, "../helperScripts")
 sys.path.insert(1, "../Kinetics")
+from DBLOutilities import PrintLogger as PrintLogger
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -67,19 +68,23 @@ for i, ax in enumerate([axA, axB, axC, axD, axE, axF, axG, axH, axI, axJ, axK, a
         ha="right",
     )
 
+sys.stdout = PrintLogger('NOTES.txt', 'w')
 #####################################
 if not os.path.exists('activemodels.json'):
     subprocess.call(["python3", "getbasemodels.py"])
 #######################################
+df_expsummaryactiveF = pd.read_pickle("../helperScripts/expsummaryactiveF.pkl")
+
 # Load models from the JSON file
 basemodels_list = []
 file_path = "activemodels.json"
 with open(file_path, "r") as file:
     for line in file:
         basemodel = json.loads(line)
-        basemodels_list.append(basemodel)
+        if (basemodel["Features"]["AP1_width_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_width_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "90th quantile"]):
+            basemodels_list.append(basemodel)
 
-df_expsummaryactiveF = pd.read_pickle("../helperScripts/expsummaryactiveF.pkl")
+print(f'number of valid activemodels: {len(basemodels_list)}')
 ########################################################################
 image = plt.imread('single compt.png')
 position = axA.get_position()
@@ -178,39 +183,39 @@ for i in range(len(basemodels_list)):
 axC.scatter(np.array(Em_list)*1e3, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axC.scatter(np.array(Em_list)[np.argsort(DBLO_list)[0]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axC.scatter(np.array(Em_list)[np.argsort(DBLO_list)[-1]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axC.set_xlabel('Em (mV)')
+axC.set_xlabel(r'$E_m$ (mV)')
 axC.set_ylabel('DBLO (mV)')
 
 axD.scatter(np.array(Rm_list)*1e-6, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axD.scatter(np.array(Rm_list)[np.argsort(DBLO_list)[0]]*1e-6, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axD.scatter(np.array(Rm_list)[np.argsort(DBLO_list)[-1]]*1e-6, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axD.set_xlabel(r'Rm (M$\Omega$)')
+axD.set_xlabel(r'$R_m$ (M$\Omega$)')
 # axD.set_ylabel('DBLO (mV)')
 
 axE.scatter(np.array(Cm_list)*1e12, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axE.scatter(np.array(Cm_list)[np.argsort(DBLO_list)[0]]*1e12, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axE.scatter(np.array(Cm_list)[np.argsort(DBLO_list)[-1]]*1e12, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axE.set_xlabel('Cm (pF)')
+axE.set_xlabel(r'$C_m$ (pF)')
 # axE.set_ylabel('DBLO (mV)')
 
 ##############################
 axF.scatter(np.array(h_Chan_Gbar_list)*1e6, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axF.scatter(np.array(h_Chan_Gbar_list)[np.argsort(DBLO_list)[0]]*1e6, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axF.scatter(np.array(h_Chan_Gbar_list)[np.argsort(DBLO_list)[-1]]*1e6, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axF.set_xlabel(r'h_Chan_$\overline{G}$ ($\mu$S)')
+axF.set_xlabel(r'h_Chan_Gbar ($\mu$S)')
 axF.set_ylabel('DBLO (mV)')
 
 axG.scatter(np.array(K_DR_Chan_Gbar_list)*1e6, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axG.scatter(np.array(K_DR_Chan_Gbar_list)[np.argsort(DBLO_list)[0]]*1e6, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axG.scatter(np.array(K_DR_Chan_Gbar_list)[np.argsort(DBLO_list)[-1]]*1e6, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axG.set_xlabel(r'K_DR_Chan_$\overline{G}$ ($\mu$S)')
+axG.set_xlabel(r'K_DR_Chan_Gbar ($\mu$S)')
 # axG.set_ylabel('DBLO (mV)')
 axG.set_xscale('log')
 
 axH.scatter(np.array(Na_T_Chan_Gbar_list)*1e6, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axH.scatter(np.array(Na_T_Chan_Gbar_list)[np.argsort(DBLO_list)[0]]*1e6, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axH.scatter(np.array(Na_T_Chan_Gbar_list)[np.argsort(DBLO_list)[-1]]*1e6, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axH.set_xlabel(r'Na_T_Chan_$\overline{G}$ ($\mu$S)')
+axH.set_xlabel(r'Na_T_Chan_Gbar ($\mu$S)')
 # axH.set_ylabel('DBLO (mV)')
 axH.set_xscale('log')
 
@@ -218,38 +223,38 @@ axH.set_xscale('log')
 axI.scatter(np.array(A_list)*1e3, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axI.scatter(np.array(A_list)[np.argsort(DBLO_list)[0]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axI.scatter(np.array(A_list)[np.argsort(DBLO_list)[-1]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axI.set_xlabel('$K^+$ n_A')
+axI.set_xlabel('$K^+$ A')
 axI.set_ylabel('DBLO (mV)')
 
 axJ.scatter(np.array(B_list)*1e3, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axJ.scatter(np.array(B_list)[np.argsort(DBLO_list)[0]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axJ.scatter(np.array(B_list)[np.argsort(DBLO_list)[-1]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axJ.set_xlabel('$K^+$ n_B')
+axJ.set_xlabel('$K^+$ B')
 # axJ.set_ylabel('DBLO (mV)')
 
 axK.scatter(np.array(C_list)*1e3, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axK.scatter(np.array(C_list)[np.argsort(DBLO_list)[0]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axK.scatter(np.array(C_list)[np.argsort(DBLO_list)[-1]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axK.set_xlabel('$K^+$ n_C')
+axK.set_xlabel('$K^+$ C')
 # axK.set_ylabel('DBLO (mV)')
 
 ###############################
 axL.scatter(np.array(D_list)*1e3, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axL.scatter(np.array(D_list)[np.argsort(DBLO_list)[0]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axL.scatter(np.array(D_list)[np.argsort(DBLO_list)[-1]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axL.set_xlabel('$K^+$ n_D')
+axL.set_xlabel('$K^+$ D')
 axL.set_ylabel('DBLO (mV)')
 
 axM.scatter(np.array(E_list)*1e3, np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axM.scatter(np.array(E_list)[np.argsort(DBLO_list)[0]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axM.scatter(np.array(E_list)[np.argsort(DBLO_list)[-1]]*1e3, np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axM.set_xlabel('$K^+$ n_E')
+axM.set_xlabel('$K^+$ E')
 # axM.set_ylabel('DBLO (mV)')
 
 axN.scatter(np.array(F_list), np.array(DBLO_list)*1e3, s=4, c='C7', alpha=0.4)
 axN.scatter(np.array(F_list)[np.argsort(DBLO_list)[0]], np.array(DBLO_list)[np.argsort(DBLO_list)[0]]*1e3, s=50, c='C3', marker='X')
 axN.scatter(np.array(F_list)[np.argsort(DBLO_list)[-1]], np.array(DBLO_list)[np.argsort(DBLO_list)[-1]]*1e3, s=50, c='C2', marker='X')
-axN.set_xlabel('$K^+$ n_F')
+axN.set_xlabel('$K^+$ F')
 # axN.set_ylabel('DBLO (mV)')
 
 ################################
@@ -269,8 +274,10 @@ axO.set_ylabel('DBLO (mV)')
 stim_start = 0.5
 tvec, _, Vmvec, _ = mm.runModel(basemodels_list[np.argsort(DBLO_list)[0]], 150e-12, refreshKin=True)
 axP.plot((tvec-stim_start)*1e3, Vmvec*1e3, c='C3', label=f'{basemodels_list[np.argsort(DBLO_list)[0]]["Features"]["DBLO_1.5e-10"]*1e3:1.1f} mV DBLO')
+print(f'low DBLO model DBLO: {basemodels_list[np.argsort(DBLO_list)[0]]["Features"]["DBLO_1.5e-10"]*1e3:1.1f}')
 tvec, _, Vmvec, _ = mm.runModel(basemodels_list[np.argsort(DBLO_list)[-1]], 150e-12, refreshKin=True)
 axP.plot((tvec-stim_start)*1e3, Vmvec*1e3, c='C2', label=f'{basemodels_list[np.argsort(DBLO_list)[-1]]["Features"]["DBLO_1.5e-10"]*1e3:1.1f} mV DBLO')
+print(f'high DBLO model DBLO: {basemodels_list[np.argsort(DBLO_list)[-1]]["Features"]["DBLO_1.5e-10"]*1e3:1.1f}')
 
 # axP.legend(frameon=False, loc='center right', bbox_to_anchor=(1.1,1),handlelength=1)
 axP.legend(frameon=False, ncols=2,handlelength=1, loc='upper center', bbox_to_anchor=(0.5,1.3))
@@ -284,6 +291,8 @@ Inf, Tau = ChanGate(v, *basemodels_list[np.argsort(DBLO_list)[0]]["Parameters"][
 axB.plot(v*1e3, Tau*1e3, c='C3', alpha=0.5, linewidth=2)
 Inf, Tau = ChanGate(v, *basemodels_list[np.argsort(DBLO_list)[-1]]["Parameters"]["Channels"]["K_DR_Chan"]["KineticVars"].values())
 axB.plot(v*1e3, Tau*1e3, c='C2', alpha=0.5, linewidth=2)
+
+print(f'Number of high DBLO models: {len(np.array(DBLO_list)>=14.3)}')
 ######################
 sns.despine(fig=fig)
 plt.savefig('Fig7.png', dpi=300)
@@ -291,34 +300,34 @@ plt.show()
 
 
 ###### Some stats ##############
-f=open('NOTES.txt', 'w')
+m, b, r, pvalue, _ = scs.linregress(np.array(Em_list), np.array(DBLO_list)*1e3)
+print('Em', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(Rm_list), np.array(DBLO_list)*1e3)
+print('Rm', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(Cm_list), np.array(DBLO_list)*1e3)
+print('Cm', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(h_Chan_Gbar_list), np.array(DBLO_list)*1e3)
+print('h_Chan_Gbar', f'{r:1.2f}', f'{pvalue:1.2e}')
 m, b, r, pvalue, _ = scs.linregress(np.array(K_DR_Chan_Gbar_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
+print('K_DR_Chan_Gbar', f'{r:1.2f}', f'{pvalue:1.2e}')
 m, b, r, pvalue, _ = scs.linregress(np.array(Na_T_Chan_Gbar_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(A_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(B_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(C_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(D_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(E_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(F_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
-m, b, r, pvalue, _ = scs.linregress(np.array(Taum65_list), np.array(DBLO_list)*1e3)
-print(f'{r:1.2f}', f'{pvalue:1.2e}')
-f.write(f'{r:1.2f}, {pvalue:1.2e}\n')
+print('Na_T_Chan_Gbar', f'{r:1.2f}', f'{pvalue:1.2e}')
 
-f.write(f'Max DBLO - {np.max(DBLO_list)*1e3}\n')
-f.close()
+print('##############################\n')
+
+m, b, r, pvalue, _ = scs.linregress(np.array(A_list), np.array(DBLO_list)*1e3)
+print('A', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(B_list), np.array(DBLO_list)*1e3)
+print('B', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(C_list), np.array(DBLO_list)*1e3)
+print('C', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(D_list), np.array(DBLO_list)*1e3)
+print('D', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(E_list), np.array(DBLO_list)*1e3)
+print('E', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(F_list), np.array(DBLO_list)*1e3)
+print('F', f'{r:1.2f}', f'{pvalue:1.2e}')
+m, b, r, pvalue, _ = scs.linregress(np.array(Taum65_list), np.array(DBLO_list)*1e3)
+print('Taum65', f'{r:1.2f}', f'{pvalue:1.2e}')
+
+print(f'Max DBLO - {np.max(DBLO_list)*1e3}\n')

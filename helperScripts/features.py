@@ -45,7 +45,10 @@ warnings.simplefilter(action="ignore", category=RuntimeError)
 # warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # from sklearn.linear_model import LinearRegression
-
+elecPlotDt = 5e-5
+mm.elecPlotDt = elecPlotDt
+elecDt = 5e-6
+mm.elecDt = elecDt
 
 def calcRinCin(
     tm25,
@@ -260,7 +263,8 @@ def ftscalc_helper(
         "ISImedian_1.5e-10",
         "freq_1.5e-10",
         "Adptn_id_1.5e-10",
-        "fAHP_AP1_amp_1.5e-10" "mAHP_stimend_amp_1.5e-10",
+        "fAHP_AP1_amp_1.5e-10",
+        "mAHP_stimend_amp_1.5e-10",
         "sAHP_stimend_amp_1.5e-10",
         "AHP_AP1_amp_1.5e-10",
         "AHP_APp_amp_1.5e-10",
@@ -300,7 +304,8 @@ def ftscalc_helper(
         "ISImedian_3e-10",
         "freq_3e-10",
         "Adptn_id_3e-10",
-        "fAHP_AP1_amp_3e-10" "mAHP_stimend_amp_3e-10",
+        "fAHP_AP1_amp_3e-10",
+        "mAHP_stimend_amp_3e-10",
         "sAHP_stimend_amp_3e-10",
         "AHP_AP1_amp_3e-10",
         "AHP_APp_amp_3e-10",
@@ -422,7 +427,9 @@ def ftscalc_helper(
             )
             trace_result = traces_results[0]
             try:
-                if (traces_results[0]["AP_amplitude"]<50).any(): ## If any of the spikes are less than 50 mV, the APs are invalid
+                if (traces_results[0]["AP_amplitude"]<20).any(): ## If any of the spikes are less than 50 mV, the APs are invalid
+                    # print('AP amplitude less')
+                    # pprint(features)
                     return features
             except Exception as e:
                 return features
@@ -705,6 +712,7 @@ def modelfeatures(
         modeldict, 300e-12, refreshKin=False
     )
     # plt.plot(t150, Vtrace150)
+    # plt.show()
 
     features = {}
     # features['Model name'] = cellpath.split('/')[-1]

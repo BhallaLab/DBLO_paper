@@ -18,6 +18,7 @@ import os
 from pprint import pprint
 import scipy.stats as scs
 
+f = open('NOTES.txt', 'w')
 
 sns.set(style="ticks")
 sns.set_context("paper")
@@ -74,6 +75,7 @@ axA.set_ylim(-90e-3*1e3, 40e-3*1e3)
 axA.axhline(y=Features['E_rest_150']*1e3, color='black', linestyle='dotted', xmin=0, xmax=1)
 axA.axhline(y=Features['DBL_1.5e-10']*1e3, color='black', linestyle='--')
 
+f.write(f"DBLO150 of the representative exp: {Features['DBLO_1.5e-10']*1e3} mV \n")
 
 # Plot something on the second subplot
 axB.plot((T_300pA-stim_start)*1e3, (Vm_300pA-LJP)*1e3, c='C0')
@@ -84,6 +86,8 @@ axB.set_ylim(-90e-3*1e3, 40e-3*1e3)
 axB.tick_params(left=False, labelleft=False)
 axB.axhline(y=Features['E_rest_300']*1e3, color='black', linestyle='dotted')
 axB.axhline(y=Features['DBL_3e-10']*1e3, color='black', linestyle='--')
+
+f.write(f"DBLO300 of the representative exp: {Features['DBLO_3e-10']*1e3} mV \n")
 
 # Add text between the two subplots
 fig.text(0.535, 0.625, 'DBLO', ha='center', fontsize=14)
@@ -186,6 +190,13 @@ axC.set_ylabel('DBLO (mV)')
 # axC.set_xticks(Inj)
 pprint(f'The mean DBLO is {meann}')
 
+f.write(f'The min DBLO at 150 pA is {np.nanmin(DBL_list_list[:,:,0], axis=0)[10]*1e3} mV\n')
+f.write(f'The 10th percentile DBLO at 150 pA is {np.quantile(DBL_list_list[:,:,0], 0.1,axis=0)[10]*1e3} mV\n')
+f.write(f'The mean DBLO at 150 pA is {np.nanmean(DBL_list_list[:,:,0], axis=0)[10]*1e3} mV\n')
+f.write(f'The std DBLO at 150 pA is {np.nanstd(DBL_list_list[:,:,0], axis=0)[10]*1e3} mV\n')
+f.write(f'The 90th percentile DBLO at 150 pA is {np.quantile(DBL_list_list[:,:,0], 0.9,axis=0)[10]*1e3} mV\n')
+f.write(f'The max DBLO at 150 pA is {np.nanmax(DBL_list_list[:,:,0], axis=0)[10]*1e3} mV\n')
+
 ## next Rin ##
 Rin_list = np.array(Rin_list)
 # Features_df_melted = Features_df.melt(value_vars=['Input resistance'], var_name='CA1 pyr', value_name='Input resistance (ohms)')
@@ -204,6 +215,7 @@ optimal_position_text(axD, ' '+'_'*20 + '\n' + ' '*14 + 'ns' + '\n' + f"Spearman
 # axD.tick_params(left=False, labelleft=False)
 # axD.set_title('Input resistance vs DBL at 150pA')
 print(f'Rin vs DBLO: {m_Rin=}, {b_Rin=}, {r_Rin=}, {pvalue_Rin=}')
+f.write(f'Rin vs DBLO: {m_Rin=}, {b_Rin=}, {r_Rin=}, {pvalue_Rin=}\n')
 
 # ## next Cin ##
 Cin_list = np.array(Cin_list)
@@ -224,6 +236,7 @@ optimal_position_text(axE, ' '+'_'*20 + '\n' + ' '*14 + r'$\star$' + '\n' + f"Sp
 # axE.set_title('Cell capacitance vs DBL at 150pA')
 axE.legend(frameon=False)
 print(f'Cin vs DBLO: {m_Cin=}, {b_Cin=}, {r_Cin=}, {pvalue_Cin=}')
+f.write(f'Cin vs DBLO: {m_Cin=}, {b_Cin=}, {r_Cin=}, {pvalue_Cin=}\n')
 
 
 # Show the plots
@@ -232,18 +245,19 @@ axB.spines['left'].set_visible(False)
 # axD.spines['left'].set_visible(False)
 # axE.spines['left'].set_visible(False)
 plt.savefig('Fig1.png', dpi=300)
+plt.savefig('Docs/Fig1.pdf', dpi=300)
 plt.show()
+f.close()
 
-
-######### Write to NOTES.exe ###############
-with open('NOTES.txt', 'w') as f:
-    f.write(f'Rin vs DBLO: {m_Rin=}, {b_Rin=}, {r_Rin=}, {pvalue_Rin=}\n')
-    f.write(f'Cin vs DBLO: {m_Cin=}, {b_Cin=}, {r_Cin=}, {pvalue_Cin=}\n')
-    f.write(f'The mean DBLO is {meann}\n')
-    f.write(f"{Features['DBLO_1.5e-10']=}, {Features['DBLO_3e-10']=}, {Features['DBL_1.5e-10']=}, {Features['DBL_3e-10']=}\n")
-    f.write(f'The min DBLO at 150 pA is {np.nanmin(DBL_list_list[:,:,0], axis=0)[10]}\n')
-    f.write(f'The 10th percentile DBLO at 150 pA is {np.quantile(DBL_list_list[:,:,0], 0.1,axis=0)[10]}\n')
-    f.write(f'The mean DBLO at 150 pA is {np.nanmean(DBL_list_list[:,:,0], axis=0)[10]}\n')
-    f.write(f'The 90th percentile DBLO at 150 pA is {np.quantile(DBL_list_list[:,:,0], 0.9,axis=0)[10]}\n')
-    f.write(f'The max DBLO at 150 pA is {np.nanmax(DBL_list_list[:,:,0], axis=0)[10]}\n')
+# ######### Write to NOTES.exe ###############
+# with open('NOTES.txt', 'w') as f:
+#     f.write(f'Rin vs DBLO: {m_Rin=}, {b_Rin=}, {r_Rin=}, {pvalue_Rin=}\n')
+#     f.write(f'Cin vs DBLO: {m_Cin=}, {b_Cin=}, {r_Cin=}, {pvalue_Cin=}\n')
+#     f.write(f'The mean DBLO is {meann}\n')
+#     f.write(f"{Features['DBLO_1.5e-10']=}, {Features['DBLO_3e-10']=}, {Features['DBL_1.5e-10']=}, {Features['DBL_3e-10']=}\n")
+#     f.write(f'The min DBLO at 150 pA is {np.nanmin(DBL_list_list[:,:,0], axis=0)[10]}\n')
+#     f.write(f'The 10th percentile DBLO at 150 pA is {np.quantile(DBL_list_list[:,:,0], 0.1,axis=0)[10]}\n')
+#     f.write(f'The mean DBLO at 150 pA is {np.nanmean(DBL_list_list[:,:,0], axis=0)[10]}\n')
+#     f.write(f'The 90th percentile DBLO at 150 pA is {np.quantile(DBL_list_list[:,:,0], 0.9,axis=0)[10]}\n')
+#     f.write(f'The max DBLO at 150 pA is {np.nanmax(DBL_list_list[:,:,0], axis=0)[10]}\n')
 

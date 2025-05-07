@@ -1,2 +1,4 @@
-DBL and DBLO resp are -0.04401219098217764, 0.025964105890941988
-LJP is 15mV
+Exp DBL pre-correction: -43.100396669097506 mV
+Exp DBL post-LJPcorrection: -58.100396669097506 mV
+hinf at DBL pre-correction: 0.24343769931431727
+hinf at DBL post-correction: 0.6275726684426908

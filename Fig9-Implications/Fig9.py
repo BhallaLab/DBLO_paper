@@ -1,6 +1,11 @@
+# import pylustrator
+
+# pylustrator.start()
+
 import sys
 
 sys.path.insert(1, "../helperScripts")
+from DBLOutilities import PrintLogger as PrintLogger
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -33,8 +38,6 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 sns.set(style="ticks")
 sns.set_context("paper")
-plt.rcParams['xtick.labelsize']='small'
-plt.rcParams['ytick.labelsize']='small'
 
 def add_caxes(fig, rect):
     '''
@@ -161,7 +164,8 @@ for i, ax in enumerate([axE_DBLOvsGk, axE_rep]):
         ha="right",
     )
 
-NOTESf = open('NOTES.txt', 'w')
+# NOTESf = open('NOTES.txt', 'w')
+sys.stdout = PrintLogger('NOTES.txt', 'w')
 ######## Panel A ######################
 df_expsummaryactiveF = pd.read_pickle("../helperScripts/expsummaryactiveF.pkl")
 
@@ -171,7 +175,8 @@ with open(file_path, "r") as file:
     for line in tqdm(file):
         basemodel = json.loads(line)
         if (basemodel["Features"]["AP1_amp_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_amp_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_amp_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_amp_1.5e-10", "90th quantile"]):
-            basemodel_unified_list.append(basemodel)
+            if (basemodel["Features"]["AP1_width_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_width_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "90th quantile"]):
+                basemodel_unified_list.append(basemodel)
 
 DBLO_list = np.array([a["Features"]["DBLO_1.5e-10"] for a in basemodel_unified_list])
 highDBLOmodel = np.array(basemodel_unified_list)[np.argsort(DBLO_list)[-1]]
@@ -183,9 +188,9 @@ axA.set_ylabel('Voltage (mV)')
 axA.set_xlim(-0.1*1e3, 0.6*1e3)
 axA.set_ylim(-100e-3*1e3, 60e-3*1e3)
 axA.set_title("Representative \n high DBLO model")
-print(highDBLOmodel["Features"]["DBLO_1.5e-10"], sum(DBLO_list>14.3e-3))
-NOTESf.write(f'{highDBLOmodel["Features"]["DBLO_1.5e-10"] = }\n')
-NOTESf.write(f'{sum(DBLO_list>14.3e-3) = }\n')
+print('Highest DBLO model', highDBLOmodel["Features"]["DBLO_1.5e-10"])
+print(f'Number of valid unified models: {len(DBLO_list)}')
+print(f'Number of high DBLO models: {sum(DBLO_list>=14.3e-3)}')
 
 #######################################
 ################## Panel B#####################
@@ -195,48 +200,14 @@ Gbarratio = np.array(Na_T_Chan_Gbar)/np.array(K_DR_Chan_Gbar)
 spikes = [a["Features"]["freq_1.5e-10"] / 2 for a in basemodel_unified_list]
 baseID_list = np.array([a["Parameters"]["notes"] for a in basemodel_unified_list])
 
-tempdict = {"Gbarratio":Gbarratio, "DBLO":DBLO_list, "spikes":spikes, "baseID":baseID_list}
-tempdata = pd.DataFrame(tempdict)
-md = smf.mixedlm("Gbarratio ~ DBLO", tempdata, groups=tempdata["baseID"])
-# mdf = md.fit(method=['powell', 'nm', 'bfgs'], maxiter=10000, xtol=1e-4)
-mdf = md.fit()
-print(mdf.summary())
-print(mdf.random_effects)
-print(mdf.pvalues)
-NOTESf.write(f'{mdf.summary()=}\n')
-NOTESf.write(f'{mdf.random_effects=}\n')
-NOTESf.write(f'{mdf.pvalues=}\n')
+axB.scatter(np.array(DBLO_list)*1e3, Gbarratio, c='C7', s=3)
 
-
-cmap = tab20
-norm = plt.Normalize(0, len(set(baseID_list)) - 1)
-colors = np.array([cmap(norm(list(tempdata['baseID'].unique()).index(label))) for label in baseID_list])
-# Scatter plot of the observed data
-for i,baseID in enumerate(tempdata['baseID'].unique()):
-    baseID_data = tempdata[tempdata['baseID'] == baseID]
-    c = colors[baseID_list==baseID]
-    # axB.scatter(baseID_data['DBLO'], baseID_data['Gbarratio'], label=f'{i}', c=c, s=3, alpha=0.6)
-    axB.scatter(baseID_data['DBLO'], baseID_data['Gbarratio'], c=c, s=3, alpha=0.6)
-
-# Fitted line for the fixed effect
-x = np.linspace(tempdata['DBLO'].min(), tempdata['DBLO'].max(), 100)
-y = mdf.params['Intercept'] + mdf.params['DBLO'] * x
-axB.plot(x, y, '--', color='black', label='Fixed effect')
-
-# Random effects for each baseID
-random_effects = mdf.random_effects
-for baseID, re in random_effects.items():
-    c = colors[baseID_list==baseID]
-    x = np.linspace(tempdata[tempdata["baseID"]==baseID]['DBLO'].min(), tempdata[tempdata["baseID"]==baseID]['DBLO'].max(), 100)
-    # axB.plot(x, mdf.params['Intercept'] + re['Group'] + re['DBLO'] * x, label=f'Random Effect {baseID}')
-    axB.plot(x, mdf.params['Intercept'] + re['Group'] + mdf.params['DBLO'] * x, c=c[0])
-
-axB.plot(0,0, color= 'black', label='Random effects')
+print('DBLO vs Gbarratio', scipy.stats.pearsonr(np.array(DBLO_list)*1e3, Gbarratio))
 
 axB.set_xlabel('DBLO (mV)')
 axB.set_ylabel(r'$\frac{Na\_T\_Chan\_Gbar}{K\_DR\_Chan\_Gbar}$')
 # axB.legend(frameon=False, title="Base imp model id", loc='center left', bbox_to_anchor=(1, 0.5),  markerscale=2)
-axB.legend(frameon=False)
+# axB.legend(frameon=False)
 ################################################################################################################
 
 #### Panel C ###################################################################################################
@@ -288,7 +259,7 @@ for ii,Cachan in enumerate(['CaL', 'CaN', 'CaR', 'CaT']):
     # Cachan_axeslist[ii].xlabel('DBLO (mV)')
     Cachan_axeslist[ii].set_ylabel('Median Ca conc (nM)')
     m, b, r, pvalue, _ = scs.linregress(np.array(DBLO_list*1e3), medianCa_list*1e6)
-    NOTESf.write(f'DBLO vs {Cachan} = {m, b, r, pvalue}\n')
+    print(f'DBLO vs {Cachan} = {m, b, r, pvalue}\n')
 
 # axC_CaR.set_ylabel('Median Ca conc (nM)')
 axC_CaT.set_xlabel('DBLO (mV)')
@@ -339,20 +310,22 @@ axD_DBLOvsNaP.set_ylabel('Na_P_Chan_Gbar (nS)')
 axD_DBLOvsNaP.set_title('Minimum Na_P_Chan_Gbar \n needed for bistability')
 # axD_DBLOvsNaP.legend(frameon=False)
 # axD_DBLOvsNaP.text(5,80, f'r = {np.corrcoef([DBLO_list_filtered_unified, minNaP_list_filtered_unified])[0][1]:.2f}')
-NOTESf.write(f'DBLO_list_filtered_unified vs minNaP_list_filtered_unified = {np.corrcoef([DBLO_list_filtered_unified, minNaP_list_filtered_unified])[0][1]:.2f}\n')
+print(f'DBLO_list_filtered_unified vs minNaP_list_filtered_unified = {np.corrcoef([DBLO_list_filtered_unified, minNaP_list_filtered_unified])[0][1]:.2f}\n')
+print(f'NaP number of models: {len(DBLO_list_filtered_unified)}')
 
 def replaceNone(array, replacer):
-    if replacer!=None:
+    if replacer is not None:
         return np.array([x if x is not None else replacer for x in array])
     else:
         return np.array([x for x in array if x is not None])
 
 highDBLO_minNaP = replaceNone(minNaP_list_unified[np.array(DBLO_list)>14.3e-3], None)
-lowDBLO_minNaP = replaceNone(minNaP_list_unified[np.array(DBLO_list)<=10e-3], None)
-t_stat, p_value = scs.ttest_ind(highDBLO_minNaP, lowDBLO_minNaP, equal_var=False)
-NOTESf.write(f'{np.nanmean(highDBLO_minNaP) =:.2e}, {np.nanstd(highDBLO_minNaP) =:.2e}\n')
-NOTESf.write(f'{np.nanmean(lowDBLO_minNaP) =:.2e}, {np.nanstd(lowDBLO_minNaP) =:.2e}\n')
-NOTESf.write(f'highDBLO_minNaP vs lowDBLO_minNaP ttest {p_value =:.3e}\n')
+moderateDBLO_minNaP = replaceNone(minNaP_list_unified[np.array(DBLO_list)<=10e-3], None)
+t_stat, p_value = scs.ttest_ind(highDBLO_minNaP, moderateDBLO_minNaP, equal_var=False)
+print(f'{np.nanmean(highDBLO_minNaP) =:.2e}, {np.nanstd(highDBLO_minNaP) =:.2e}\n')
+print(f'{np.nanmean(moderateDBLO_minNaP) =:.2e}, {np.nanstd(moderateDBLO_minNaP) =:.2e}\n')
+print(f'highDBLO_minNaP vs lowDBLO_minNaP ttest {p_value =:.3e}\n')
+print(f'Number of minNaP models that did not become bistable: {list(minNaP_list_unified).count(None)}')
 
 ################################################################################################################
 ###### Panel E #################################################################################################
@@ -374,9 +347,9 @@ axE_DBLOvsGk.set_xlabel('DBLO at 300 pA (mV)')
 axE_DBLOvsGk.set_ylabel('Gap junction conductance (nS)')
 
 m, b, r, pvalue, _ = scs.linregress(DBLO300list*1e3, Gk0list*1e9)
-NOTESf.write(f'DBLO300 vs Gkmin 1 = {m, b, r, pvalue}\n')
+print(f'DBLO300 vs Gkmin 1 = {m, b, r, pvalue, len(DBLO300list)}\n')
 m, b, r, pvalue, _ = scs.linregress(DBLO300list*1e3, Gk1list*1e9)
-NOTESf.write(f'DBLO300 vs Gkmin 2 = {m, b, r, pvalue}\n')
+print(f'DBLO300 vs Gkmin 2 = {m, b, r, pvalue, len(DBLO300list)}\n')
 
 _ = np.load('Vmvec_gap.npz') #Load the stored Vm traces of gap junction neurons generated by gapjunction_singletrace.py
 tvec_gap, Vmvec1_gap, Vmvec2_gap = _['tvec_gap'], _['Vmvec1_gap'], _['Vmvec2_gap']
@@ -402,8 +375,13 @@ axC_CaN.spines['bottom'].set_visible(False)
 axC_CaR.spines['bottom'].set_visible(False)
 axD_rephighDBLO.spines['bottom'].set_visible(False)
 # # plt.tight_layout()
-plt.savefig('Fig9.png', dpi=300)
-# # plt.savefig('Fig8.pdf', dpi=300)
-plt.show()
 
-NOTESf.close()
+# # plt.savefig('Fig8.pdf', dpi=300)
+#% start: automatic generated code from pylustrator
+plt.figure(1).ax_dict = {ax.get_label(): ax for ax in plt.figure(1).axes}
+import matplotlib as mpl
+getattr(plt.figure(1), '_pylustrator_init', lambda: ...)()
+plt.figure(1).axes[9].legend(loc=(0.03063, 0.8975), frameon=False)
+#% end: automatic generated code from pylustrator
+plt.savefig('Fig9.png', dpi=300)
+plt.show()

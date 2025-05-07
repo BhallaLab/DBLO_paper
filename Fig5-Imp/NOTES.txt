@@ -1,27 +1,37 @@
-Repeated Measures ANOVA      Source  ddof1  ddof2          F  p-unc       ng2       eps
-0  modelID   4173   8346  40.151689    0.0  0.857656  0.000315
-paired ttest Imp vs 1compt 0.0
-paired ttest Imp vs pas 0.0
-paired ttest pas vs 1compt 0.0
-Mean DBLO at 150pA
- type
-1compt   -12.747611
-imp       -9.309142
-pas      -11.736035
-Name: DBLO150\n(mV), dtype: Float64
-paired ttest Imp vs pas 0.0
+Number of base supra 1compt models: 274
+
+Number of base supra imp models: 274
+
+Number of base supra pas models: 274
+
+Repeated Measures ANOVA:     Source  ddof1  ddof2          F          p-unc       ng2       eps
+0  modelID    273    546  15.438022  2.860232e-153  0.598633  0.004498 
+
+paired ttest, Imp vs 1compt, 2.4230587878054803e-105, 
+
+paired ttest, Imp vs pas, 3.259719958544472e-93, 
+
+paired ttest, pas vs 1compt, 1.2901840521270812e-82, 
+
+Mean DBLO at 150pA: type
+1compt   -16.530741
+imp      -12.117747
+pas      -14.954934
+Name: DBLO150\n(mV), dtype: Float64 
+
+paired ttest Imp vs pas 5.277009996214896e-86
 Mean Axial Charge type
-imp    1.641018
-pas    0.583888
+imp    1.307262
+pas    0.554254
 Name: Backprop charge \n(pF), dtype: object
 std Axial Charge type
-imp    0.742498
-pas    0.499025
+imp    0.486914
+pas    0.283687
 Name: Backprop charge \n(pF), dtype: float64
-1compt 4170 4 0
-pas 4173 1 0
-imp 4154 19 1
--1.257430686468231
-3.438469499739852
-9.169810040652523
-Max DBLO in imp models - 14.645325750503064
+1compt 274 0 0
+pas 274 0 0
+imp 274 0 0
+Minimum difference between DBLO of imp and 1compt pairs: 0.954323931496166
+Mean difference between DBLO of imp and 1compt pairs: 4.412994132985497
+Maximum difference between DBLO of imp and 1compt pairs: 7.957972505817493
+Max DBLO in imp models - -2.7292761677580604

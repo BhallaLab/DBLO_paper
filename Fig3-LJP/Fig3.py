@@ -15,6 +15,7 @@ from scipy.signal import butter, filtfilt
 import expcells
 import features as fts
 from tqdm import tqdm
+from scipy.interpolate import interp1d
 
 sns.set(style="ticks")
 sns.set_context("paper")
@@ -75,6 +76,8 @@ for i, ax in enumerate([axD[0], axD[1]]):
         ha="right",
     )
 
+f = open('NOTES.txt', 'w')
+
 ### getting the kinetics ###
 import moose
 import Na_T_Chan_Royeck_wslow
@@ -113,19 +116,28 @@ axB.axhline(y=Features["DBL_3e-10"]*1e3, color='C4', linestyle='--')
 axB.axhline(y=(Features["DBL_3e-10"]-LJP)*1e3, color='C0', linestyle='--')
 axB.legend(frameon=False, loc='lower center')
 
+f.write(f"Exp DBL pre-correction: {Features['DBL_3e-10']*1e3} mV\n")
+f.write(f"Exp DBL post-LJPcorrection: {(Features['DBL_3e-10']-LJP)*1e3} mV\n")
+
 ##### The kinetics ###############
 axC.plot(v*1e3, minf**3, c='C1', label='$m_{inf}^3$')
 axC.plot(v*1e3, hinf, c='C5', label='$h_{inf}$')
 axC.set_xlabel('Voltage (mV)')
 axC.set_ylabel('steady state')
 axC.set_xlim(-0.1*1e3, 0*1e3)
-axC.set_title('Na Channel kinetics')
+axC.set_title(r'Na$^+$ Channel kinetics')
 axC.legend(frameon=False)
 
 axC.axvline(x=Features["DBL_3e-10"]*1e3, color='C4', linestyle='--')
 axC.axvline(x=(Features["DBL_3e-10"]-LJP)*1e3, color='C0', linestyle='--', alpha=0.5)
 
 print(Features["DBL_3e-10"], Features["DBLO_3e-10"])
+
+hinf_interp = interp1d(v * 1e3, hinf, kind='linear', fill_value='extrapolate')
+hinf_at_vline = hinf_interp(Features["DBL_3e-10"] * 1e3)
+f.write(f"hinf at DBL pre-correction: {hinf_at_vline}\n")
+hinf_at_vline = hinf_interp((Features["DBL_3e-10"]-LJP)*1e3)
+f.write(f"hinf at DBL post-correction: {hinf_at_vline}\n")
 
 ### gating variables ###
 dt = T_300pA[1] - T_300pA[0]
@@ -145,26 +157,40 @@ def playexpv(LJP = 15e-3):
 m_list, h_list = playexpv(0e-3)
 axD[0].plot((T_300pA - stim_start)*1e3, np.array(m_list)**3, label='$m^3$', c='C1')
 axD[0].plot((T_300pA - stim_start)*1e3, h_list, label='h', c='C5')
-axD[0].set_xlim(-0.010*1e3,0.1*1e3)
+axD[0].set_xlim(-0.010*1e3,0.045*1e3)
 axD[0].set_ylabel('gating variable')
 axD[0].set_xlabel('Time (ms)')
 axD[0].set_title('LJP \nnot corrected')
+axD0_Vm = axD[0].twinx()
+axD0_Vm.plot((T_300pA-stim_start)*1e3, Vm_300pA*1e3, label='LJP not corrected', c='C4', alpha=0.5, linewidth=1)
+axD0_Vm.tick_params(axis='y', which='both', left=False, right=False, labelleft=False, labelright=False)
+axD0_Vm.set_ylim(-0.095*1e3, 0.05*1e3)
 
 m_list, h_list = playexpv(15e-3)
 axD[1].plot((T_300pA - stim_start)*1e3, np.array(m_list)**3, label='$m^3$', c='C1')
 axD[1].plot((T_300pA - stim_start)*1e3, h_list, label='h', c='C5')
-axD[1].set_xlim(-0.010*1e3,0.1*1e3)
+axD[1].set_xlim(-0.010*1e3,0.045*1e3)
 axD[1].set_xlabel('Time (ms)')
 axD[1].tick_params(left=False, labelleft=False)
 axD[1].set_title('LJP \ncorrected')
+axD1_Vm = axD[1].twinx()
+axD1_Vm.plot((T_300pA-stim_start)*1e3, (Vm_300pA-LJP)*1e3, label='LJP corrected', c='C0', alpha=0.5, linewidth=1)
+axD1_Vm.set_ylim(-0.095*1e3, 0.05*1e3)
+axD1_Vm.set_ylabel('Voltage (mV)', color='C0')
+axD[1].tick_params(left = False)
+axD1_Vm.spines['right'].set_color('C0')
+axD1_Vm.tick_params(axis='y', colors='C0')
 
-leg = axD[1].legend(frameon=False, loc='center left', bbox_to_anchor=(-0.275,0.4),handlelength=1)
+leg = axD[1].legend(frameon=False, loc='center left', bbox_to_anchor=(-0.15,0.4),handlelength=1)
 
 # subfig.suptitle('Na gating variables', y=0.9)
 
 ## show plot ##
 sns.despine(fig=fig)
 axD[1].spines['left'].set_visible(False)
+axD1_Vm.spines['right'].set_visible(True)
+axD1_Vm.spines['left'].set_visible(False)
 # plt.tight_layout()
-# plt.show()
 plt.savefig('Fig3.png', dpi=300)
+plt.show()
+f.close()

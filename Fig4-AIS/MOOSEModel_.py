@@ -47,12 +47,23 @@ def Parameterdict_parser(Parameterdict):
     makeBallandstickProto(sm_len=Model["Morphology"]["sm_len"], sm_diam=Model["Morphology"]["sm_diam"], dend_len=Model["Morphology"]["dend_len"], dend_diam_start=Model["Morphology"]["dend_diam_start"], dend_diam_end=Model["Morphology"]["dend_diam_end"], num_dend_segments=Model["Morphology"]["num_dend_segments"], Em=Model["Passive"]["Em"], sm_RM = Model["Passive"]["sm_RM"], sm_CM= Model["Passive"]["sm_CM"], sm_RA = Model["Passive"]["sm_RA"], dend_RM=Model["Passive"]["dend_RM"], dend_CM=Model["Passive"]["dend_CM"], dend_RA=Model["Passive"]["dend_RA"])
     cellProto = [['elec','BNeuron']]
     dend_area = np.pi*Model["Morphology"]["dend_len"]*Model["Morphology"]["dend_diam_start"]
+    soma_area = np.pi*Model["Morphology"]["sm_len"]*Model["Morphology"]["sm_diam"]
 
     chanProto = []
     chanDistrib = []
     chd = Model["Channels"]
     for channel in chd.keys():
         chanProto.append([chd[channel]["Kinetics"] + "." + channel + "()", channel])
+        if "gbar_AIS" in chd[channel].keys():
+            chanDistrib.append(
+                [channel, "dend0", "Gbar", str(chd[channel]["gbar_AIS"])]
+            )
+        elif "Gbar_AIS" in chd[channel].keys():
+            chanDistrib.append(
+                [channel, "dend0", "Gbar", str(chd[channel]["Gbar_AIS"]/dend_area)]
+            )
+
+        ## If only gbar or Gbar then its for the AIS section. This is not break the old codes
         if "gbar" in chd[channel].keys():
             chanDistrib.append(
                 [channel, "dend0", "Gbar", str(chd[channel]["gbar"])]
@@ -60,6 +71,14 @@ def Parameterdict_parser(Parameterdict):
         elif "Gbar" in chd[channel].keys():
             chanDistrib.append(
                 [channel, "dend0", "Gbar", str(chd[channel]["Gbar"]/dend_area)]
+            )
+        if "gbar_soma" in chd[channel].keys():
+            chanDistrib.append(
+                [channel, "soma", "Gbar", str(chd[channel]["gbar_soma"])]
+            )
+        elif "Gbar_soma" in chd[channel].keys():
+            chanDistrib.append(
+                [channel, "soma", "Gbar", str(chd[channel]["Gbar_soma"]/soma_area)]
             )
         Parameters[channel + "_Erev"] = chd[channel]["Erev"]
 

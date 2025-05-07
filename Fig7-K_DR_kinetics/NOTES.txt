@@ -1,10 +1,28 @@
--0.26, 5.08e-12
--0.17, 1.29e-05
-0.05, 1.72e-01
-0.17, 6.21e-06
-0.05, 2.39e-01
--0.14, 4.24e-04
--0.37, 2.68e-23
-0.07, 7.02e-02
--0.48, 3.25e-40
-Max DBLO - 7.835437702659432
+number of valid activemodels: 52
+low DBLO model DBLO: -15.1
+high DBLO model DBLO: 16.2
+Number of high DBLO models: 52
+52
+Number of high DBLO models: [False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False]
+array([-0.00848799, -0.00419567, -0.00948856,  0.01615258, -0.01214463,
+        0.00063155,  0.00466243, -0.01195687, -0.00475736,  0.01005237,
+       -0.00881398, -0.00833993, -0.01402282, -0.0070608 , -0.00188912,
+       -0.01445081, -0.01049958, -0.01241094, -0.00980449, -0.00882583,
+        0.00417174, -0.0066691 , -0.01348742, -0.01308196,  0.00745184,
+       -0.01273401, -0.00367698, -0.00351741, -0.00783551,  0.00058271,
+       -0.00573513, -0.00436133,  0.00185848, -0.00727813, -0.01217869,
+       -0.0056549 , -0.014036  ,  0.01238238, -0.00498217, -0.01025274,
+       -0.0014758 , -0.00177086, -0.01514254, -0.01444358, -0.01059527,
+       -0.00802481, -0.00150097,  0.00742779, -0.00562649,  0.00961976,
+       -0.01335961, -0.01130023])
+array([False, False, False,  True, False, False, False, False, False,
+       False, False, False, False, False, False, False, False, False,
+       False, False, False, False, False, False, False, False, False,
+       False, False, False, False, False, False, False, False, False,
+       False, False, False, False, False, False, False, False, False,
+       False, False, False, False, False, False, False])
+1

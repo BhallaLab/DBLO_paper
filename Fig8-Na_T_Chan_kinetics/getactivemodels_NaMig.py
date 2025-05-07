@@ -23,6 +23,7 @@ import pickle
 import json
 from scipy import signal
 import warnings
+mm.elecPlotDt = 5e-6
 
 # warnings.simplefilter(action="ignore", category=FutureWarning)
 # warnings.simplefilter(action="ignore", category=RuntimeWarning)
@@ -37,7 +38,7 @@ Featurelist = [
     # "sagV_m50",
     # "sagrat_m50",
     "freq_0",
-    # "AP1_amp_1.5e-10",
+    "AP1_amp_1.5e-10",
     # "APp_amp_1.5e-10",
     # "AP1_time_1.5e-10",
     # "APp_time_1.5e-10",
@@ -204,11 +205,11 @@ with open(file_path, "r") as file:
 ######################################################################################
 def ourfunc(i):
     Na_Chan_Gbar = 10 ** np.random.uniform(
-            -6, -4
+            -7, -4
             # -4.5, -3.7
         )
     K_DR_Chan_Gbar = 10 ** np.random.uniform(
-            -7, -4
+            -8, -4
             # -5.5, -4.3
         )
 
@@ -273,7 +274,7 @@ for cells in validcells:
             break
 
     Multiprocessthis_appendsave(
-       ourfunc, range(500), [], ["tempactivemodels_imp.pkl"], seed=seeed, npool=100
+       ourfunc, range(5000), [], ["tempactivemodels_imp.pkl"], seed=seeed, npool=120
     )
 
     with open("tempactivemodels_imp.pkl", "rb") as f, open('activemodels_NaMig.json', "a") as file:

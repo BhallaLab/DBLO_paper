@@ -86,22 +86,23 @@ def Na_T_Chan(name):
     return Na_T
 
 if __name__ == "__main__":
-    [mInf,mTau] = ChanGate(v,*[m_vhalf_inf, m_slope_inf, m_A, m_B, m_C, m_D, m_E, m_F])
-    [hInf,hTau] = ChanGate(v,*[h_vhalf_inf, h_slope_inf, h_A, h_B, h_C, h_D, h_E, h_F])
-    [sInf,sTau] = ChanGate(v,*[s_vhalf_inf, s_slope_inf, s_A, s_B, s_C, s_D, s_E, s_F])
-    plt.figure()
-    plt.plot(v, mInf, label='mInf')
-    plt.plot(v, hInf, label='hInf')
-    plt.plot(v, sInf, label='sInf')
-    plt.ylabel('Inf')
-    plt.grid()
-    plt.legend()
-    plt.figure()
-    plt.plot(v, mTau, label='mTau')
-    plt.plot(v, hTau, label='hTau')
-    plt.plot(v, sTau, label='sTau')
-    plt.ylabel('Tau')
-    plt.grid()
-    plt.legend()
+    moose.Neutral('library')
+    Na_T_Chan('Na_T_Chan')
+
+    fig, axs = plt.subplots(2,1)
+    axs[0].plot(v, (moose.element('library/Na_T_Chan/gateX').tableA/moose.element('library/Na_T_Chan/gateX').tableB)**3, label='nInf')
+    axs[0].plot(v, moose.element('library/Na_T_Chan/gateY').tableA/moose.element('library/Na_T_Chan/gateY').tableB, label='lInf')
+    axs[0].plot(v, moose.element('library/Na_T_Chan/gateZ').tableA/moose.element('library/Na_T_Chan/gateZ').tableB, label='sInf')
+    axs[0].set_ylabel('Inf')
+    axs[0].legend()
+    axs[0].grid()
+
+    axs[1].plot(v, 1/moose.element('library/Na_T_Chan/gateX').tableB, label='nTau')
+    axs[1].plot(v, 1/moose.element('library/Na_T_Chan/gateY').tableB, label='lTau')
+    axs[1].plot(v, 1/moose.element('library/Na_T_Chan/gateZ').tableB, label='sTau')
+    axs[1].set_ylabel('Tau')
+    axs[1].legend()
+    axs[1].grid()
+
     plt.show()
 

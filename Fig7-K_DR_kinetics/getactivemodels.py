@@ -34,6 +34,7 @@ Featurelist = [
     # "Input resistance",
     # "Cell capacitance",
     # "Time constant",
+    "freq_0",
     # "sagV_m50",
     # "sagrat_m50",
     # "AP1_amp_1.5e-10",
@@ -237,7 +238,7 @@ def ourfunc(i):
     )
 
     for f in Featurelist_:
-        if modelF[f] == None:
+        if modelF[f] is None:
             return [{}]
 
 
@@ -252,7 +253,7 @@ def ourfunc(i):
         if model["Features"][rrow] > df_expsummaryactiveF.loc[rrow, "90th quantile"]:
             return [{}]
     
-    print('yoooohooooo', model["Features"]["DBL_1.5e-10"])
+    print('yoooohooooo', model["Features"]["DBLO_1.5e-10"])
     return [model]
 
 seeed = np.random.randint(0, 2**32 - 1)
@@ -279,7 +280,7 @@ class NpEncoder(json.JSONEncoder):
 
 
 with open("tempactivemodels.pkl", "rb") as f, open(
-    'activemodels_all.json', "a"
+    'activemodels.json', "a"
 ) as file:
     while True:
         model = pickle.load(f)

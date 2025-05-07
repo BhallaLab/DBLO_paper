@@ -1,5 +1,8 @@
 import sys
 
+sys.path.insert(1, "../helperScripts")
+sys.path.insert(1, "../Kinetics")
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,7 +21,7 @@ import json
 
 # import pickle
 import scipy
-import MOOSEModel_multicompt_24_ as mm
+import MOOSEModel_forgapjunction as mm
 from matplotlib.cm import viridis, tab20, tab20c
 from matplotlib.colors import to_rgba
 from copy import deepcopy
@@ -31,7 +34,7 @@ import pickle
 
 from goMultiprocessing import Multiprocessthis_appendsave
 
-df_expsummaryactiveF = pd.read_pickle("expsummaryactiveF.pkl")
+df_expsummaryactiveF = pd.read_pickle("../helperScripts/expsummaryactiveF.pkl")
 
 basemodel_imp_list = []
 file_path = "activemodels_imp_Eb2_NaTallen.json"
@@ -39,7 +42,8 @@ with open(file_path, "r") as file:
     for line in tqdm(file):
         basemodel = json.loads(line)
         if (basemodel["Features"]["AP1_amp_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_amp_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_amp_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_amp_1.5e-10", "90th quantile"]):
-            basemodel_imp_list.append(basemodel)
+            if (basemodel["Features"]["AP1_width_1.5e-10"]>=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "10th quantile"]) & (basemodel["Features"]["AP1_width_1.5e-10"]<=df_expsummaryactiveF.loc["AP1_width_1.5e-10", "90th quantile"]):
+                basemodel_imp_list.append(basemodel)
         basemodel["gapjuncfeatures"] = {}
 
 DBLOlist_arg = np.argsort([a["Features"]["DBLO_1.5e-10"] for a in basemodel_imp_list])
@@ -157,7 +161,7 @@ def ourfunc(model):
     #     file.write("\n")
     return [model]
 
-Multiprocessthis_appendsave(ourfunc, basemodel_imp_list, [], ['Models_gapjuncfeatures_par.pkl'], seed=123, npool=100)
+Multiprocessthis_appendsave(ourfunc, basemodel_imp_list, [], ['Models_gapjuncfeatures_par.pkl'], seed=123, npool=110)
 
 with open('Models_gapjuncfeatures_par.pkl', "rb") as f, open('Models_gapjuncfeatures_par_300pA.json', "a") as file:
     while True:

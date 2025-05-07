@@ -108,61 +108,61 @@ with open(file_path, "r") as file:
         onecomptmodel = json.loads(line)
         onecomptmodels_list.append(onecomptmodel)
 
-# ##############################
-# def ourfunc(model):
-#     modelF = fts.modelfeatures(
-#         model, stim_start=0.5, stim_end=1, refreshKin=False
-#     )
-#     model["Features"] = modelF
-#     return [model]
+##############################
+def ourfunc(model):
+    modelF = fts.modelfeatures(
+        model, stim_start=0.5, stim_end=1, refreshKin=False
+    )
+    model["Features"] = modelF
+    return [model]
 
-# impmodels_list_ = []
-# impmodels_list_ = Multiprocessthis_appendsave(
-#        ourfunc, impmodels_list, [impmodels_list_], [], seed=0, npool=100
-#     )
-# bnspasmodels_list_ = []
-# bnspasmodels_list_ = Multiprocessthis_appendsave(
-#        ourfunc, bnspasmodels_list, [bnspasmodels_list_], [], seed=0, npool=100
-#     )
-# onecomptmodels_list_ = []
-# onecomptmodels_list_ = Multiprocessthis_appendsave(
-#        ourfunc, onecomptmodels_list, [onecomptmodels_list_], [], seed=0, npool=100
-#     )
+impmodels_list_ = []
+impmodels_list_ = Multiprocessthis_appendsave(
+       ourfunc, impmodels_list, [impmodels_list_], [], seed=0, npool=100
+    )
+bnspasmodels_list_ = []
+bnspasmodels_list_ = Multiprocessthis_appendsave(
+       ourfunc, bnspasmodels_list, [bnspasmodels_list_], [], seed=0, npool=100
+    )
+onecomptmodels_list_ = []
+onecomptmodels_list_ = Multiprocessthis_appendsave(
+       ourfunc, onecomptmodels_list, [onecomptmodels_list_], [], seed=0, npool=100
+    )
 
-# for i in tqdm(range(len(onecomptmodels_list))):
-#     isvalid=True
-#     # for rrow in Featurelist:
-#     #     if (impmodels_list[i]["Features"][rrow]<df_expsummaryactiveF.loc[rrow, "10th quantile"]) or (impmodels_list[i]["Features"][rrow]>df_expsummaryactiveF.loc[rrow, "90th quantile"]):
-#     #         isvalid=False
-#     #         break
-#     #     if (bnspasmodels_list[i]["Features"][rrow]<df_expsummaryactiveF.loc[rrow, "10th quantile"]) or (bnspasmodels_list[i]["Features"][rrow]>df_expsummaryactiveF.loc[rrow, "90th quantile"]):
-#     #         isvalid=False
-#     #         break
-#     #     if (onecomptmodels_list[i]["Features"][rrow]<df_expsummaryactiveF.loc[rrow, "10th quantile"]) or (onecomptmodels_list[i]["Features"][rrow]>df_expsummaryactiveF.loc[rrow, "90th quantile"]):
-#     #         isvalid=False
-#     #         break
+for i in tqdm(range(len(onecomptmodels_list))):
+    isvalid=True
+    for rrow in Featurelist:
+        if (impmodels_list[i]["Features"][rrow]<df_expsummaryactiveF.loc[rrow, "10th quantile"]) or (impmodels_list[i]["Features"][rrow]>df_expsummaryactiveF.loc[rrow, "90th quantile"]):
+            isvalid=False
+            break
+        if (bnspasmodels_list[i]["Features"][rrow]<df_expsummaryactiveF.loc[rrow, "10th quantile"]) or (bnspasmodels_list[i]["Features"][rrow]>df_expsummaryactiveF.loc[rrow, "90th quantile"]):
+            isvalid=False
+            break
+        if (onecomptmodels_list[i]["Features"][rrow]<df_expsummaryactiveF.loc[rrow, "10th quantile"]) or (onecomptmodels_list[i]["Features"][rrow]>df_expsummaryactiveF.loc[rrow, "90th quantile"]):
+            isvalid=False
+            break
 
-#     if isvalid:
-#         with open('activemodels_imp.json', "a") as file:
-#             json.dump(impmodels_list_[i], file, cls=NpEncoder)
-#             file.write("\n")
-#         with open('activemodels_pas.json', "a") as file:
-#             json.dump(bnspasmodels_list_[i], file, cls=NpEncoder)
-#             file.write("\n")
-#         with open('activemodels_1compt.json', "a") as file:
-#             json.dump(onecomptmodels_list_[i], file, cls=NpEncoder)
-#             file.write("\n")
+    if isvalid:
+        with open('activemodels_imp.json', "a") as file:
+            json.dump(impmodels_list_[i], file, cls=NpEncoder)
+            file.write("\n")
+        with open('activemodels_pas.json', "a") as file:
+            json.dump(bnspasmodels_list_[i], file, cls=NpEncoder)
+            file.write("\n")
+        with open('activemodels_1compt.json', "a") as file:
+            json.dump(onecomptmodels_list_[i], file, cls=NpEncoder)
+            file.write("\n")
 
 
-with open('activemodels_imp.json', "a") as file:
-    for i in range(len(impmodels_list[0])):
-        json.dump(impmodels_list[0][i], file, cls=NpEncoder)
-        file.write("\n")
-with open('activemodels_pas.json', "a") as file:
-    for i in range(len(impmodels_list[0])):
-        json.dump(bnspasmodels_list[0][i], file, cls=NpEncoder)
-        file.write("\n")
-with open('activemodels_1compt.json', "a") as file:
-    for i in range(len(impmodels_list[0])):
-        json.dump(onecomptmodels_list[0][i], file, cls=NpEncoder)
-        file.write("\n")
+# with open('activemodels_imp.json', "a") as file:
+#     for i in range(len(impmodels_list[0])):
+#         json.dump(impmodels_list[0][i], file, cls=NpEncoder)
+#         file.write("\n")
+# with open('activemodels_pas.json', "a") as file:
+#     for i in range(len(impmodels_list[0])):
+#         json.dump(bnspasmodels_list[0][i], file, cls=NpEncoder)
+#         file.write("\n")
+# with open('activemodels_1compt.json', "a") as file:
+#     for i in range(len(impmodels_list[0])):
+#         json.dump(onecomptmodels_list[0][i], file, cls=NpEncoder)
+#         file.write("\n")
